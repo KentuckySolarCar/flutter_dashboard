@@ -1,6 +1,8 @@
 # cole_dashboard
 
-Next-gen dashboard built in Flutter for UKY solar car. Uses GLFW for window management and OpenGL for graphics.
+Next-gen dashboard built in Flutter for UK solar car. 
+
+Uses https://github.com/sony/flutter-elinux as engine.
 
 ## Getting Started
 
