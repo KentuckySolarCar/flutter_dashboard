@@ -1,0 +1,1 @@
+This directory contains custom widgets that combined make up a dashboard

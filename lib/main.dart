@@ -6,13 +6,18 @@ import 'package:web_socket_channel/status.dart';
 void main(List<String> args) {
   var parser = ArgParser();
   parser.addOption('dashboard',
-      abbr: 'n',
-      help: 'Controls which dashboard should be displayed',
+      abbr: 'd',
+      help: 'Dashboard to display',
       defaultsTo: '1',
       allowed: ['1', '2']);
-  parser.addOption('host', abbr: 'h',
-      help: 'IP address pointing to the webserver',
+  parser.addOption('host',
+      abbr: 'h',
+      help: 'Webserver IP address',
       defaultsTo: '127.0.0.1');
+  parser.addOption('port',
+      abbr: 'p',
+      help: 'Webserver port',
+      defaultsTo: '1337');
   var results = parser.parse(args);
 
   switch (results['dashboard']) {
