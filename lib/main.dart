@@ -1,7 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:args/args.dart';
 
-void main() {
-  runApp(const MyApp());
+void main(List<String> args) {
+  var parser = ArgParser();
+  parser.addOption('dashboard',
+      abbr: 'n',
+      help: 'Controls which dashboard should be displayed',
+      defaultsTo: '1',
+      allowed: ['1', '2']);
+  var results = parser.parse(args);
+
+  switch (results['dashboard']) {
+    case '1':
+      runApp(MyApp());
+      break;
+    case '2':
+      // TODO launch a different dashboard
+      runApp(MyApp());
+      break;
+  }
 }
 
 class MyApp extends StatelessWidget {
