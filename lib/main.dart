@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:args/args.dart';
+import 'package:web_socket_channel/io.dart';
+import 'package:web_socket_channel/status.dart';
 
 void main(List<String> args) {
   var parser = ArgParser();
@@ -8,15 +10,18 @@ void main(List<String> args) {
       help: 'Controls which dashboard should be displayed',
       defaultsTo: '1',
       allowed: ['1', '2']);
+  parser.addOption('host', abbr: 'h',
+      help: 'IP address pointing to the webserver',
+      defaultsTo: '127.0.0.1');
   var results = parser.parse(args);
 
   switch (results['dashboard']) {
     case '1':
-      runApp(MyApp());
+      runApp(const MyApp());
       break;
     case '2':
-      // TODO launch a different dashboard
-      runApp(MyApp());
+    // TODO launch a different dashboard
+      runApp(const MyApp());
       break;
   }
 }
@@ -117,7 +122,10 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             Text(
               '$_counter',
-              style: Theme.of(context).textTheme.headline4,
+              style: Theme
+                  .of(context)
+                  .textTheme
+                  .headline4,
             ),
           ],
         ),
