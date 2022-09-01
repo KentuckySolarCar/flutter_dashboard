@@ -1,55 +1,91 @@
+import 'dart:async';
+import 'dart:io';
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:args/args.dart';
-import 'package:web_socket_channel/io.dart';
-import 'package:web_socket_channel/status.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_dashboard/models/speed.dart';
-import 'package:flutter_dashboard/models/cruise_control.dart';
-import 'package:flutter_dashboard/dashboards/basic.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
+
+import 'package:uksc_dashboard/constants.dart';
+import 'package:uksc_dashboard/models/speed.dart';
+import 'package:uksc_dashboard/models/cruise_control.dart';
+import 'package:uksc_dashboard/dashboards/basic.dart';
 
 void main(List<String> args) {
-  var parser = ArgParser();
+  // argument setup
+  final parser = ArgParser();
   parser.addOption('dashboard',
-      abbr: 'd',
-      help: 'Dashboard to display',
-      defaultsTo: '1',
-      allowed: ['1', '2']);
-  parser.addOption('host',
-      abbr: 'h', help: 'Webserver IP address', defaultsTo: '127.0.0.1');
-  parser.addOption('port',
-      abbr: 'p', help: 'Webserver port', defaultsTo: '1337');
-  var results = parser.parse(args);
+      abbr: 'd', help: 'Dashboard to display', allowed: ['1', '2', 'basic'], defaultsTo: defaultDashboard);
+  parser.addOption('host', abbr: 'h', help: 'Webserver IP address', defaultsTo: defaultHost);
+  parser.addOption('port', abbr: 'p', help: 'Webserver port', defaultsTo: defaultPort.toString());
+  final userArgs = parser.parse(args);
 
-  switch (results['dashboard']) {
+  // initialize providers
+  // final speedProvider = Provider<SpeedModel>(create: (_) => SpeedModel());
+  // final cruiseControlProvider = Provider<CruiseControl>(create: (_) => CruiseControl());
+  final speedModel = SpeedModel();
+  final cruiseControl = CruiseControl();
+
+  // async function timer thing to run speedModel.mph = 50 after 30 seconds
+  Future.delayed(const Duration(seconds: 5), () {
+    print('Starting speed simulation');
+    // set the speed using a sin wave between 0-100 every 0.01 seconds
+    Timer.periodic(const Duration(milliseconds: 10), (timer) {
+      speedModel.mph = (sin(timer.tick * 0.01) * 50).toDouble() + 50;
+    });
+  });
+
+  // final websocket = WebSocketChannel.connect(
+  //     Uri(scheme: 'wss', host: userArgs['host'], port: int.tryParse(userArgs['port']) ?? defaultPort));
+
+  // don't be clever, I know a lot of this code is shared. Read up on how const works in dart and you'll understand why
+  // I'm doing this. Specifically, const BaseApp(dashboard: BasicDashboard()) is able to be compiled because the
+  // dashboard is also const. If you try to split the only thing that changes (dashboard) in to a separate variable,
+  // you will no longer be able to instantiate BaseApp, since it is a const class requiring a const dashboard, and it is
+  // impossible to tell at compile time what it should be. The current way basically compiles each possible way, and
+  // then switches between them at runtime.
+  switch (userArgs['dashboard']) {
     case '1':
-      runApp(const BaseApp(dashboard: BasicDashboard()));
+      runApp(MultiProvider(
+        providers: [
+          ChangeNotifierProvider.value(value: speedModel),
+          ChangeNotifierProvider.value(value: cruiseControl),
+        ],
+        child: const BaseApp(dashboard: BasicDashboard()),
+      ));
       break;
     case '2':
-      // TODO launch a different dashboard
-      runApp(const BaseApp(dashboard: BasicDashboard()));
+      runApp(MultiProvider(
+        providers: [
+          ChangeNotifierProvider.value(value: speedModel),
+          ChangeNotifierProvider.value(value: cruiseControl),
+        ],
+        child: const BaseApp(dashboard: BasicDashboard()),
+      ));
       break;
+    case 'basic':
+    default:
+      runApp(MultiProvider(
+        providers: [
+          ChangeNotifierProvider.value(value: speedModel),
+          ChangeNotifierProvider.value(value: cruiseControl),
+        ],
+        child: const BaseApp(dashboard: BasicDashboard()),
+      ));
   }
 }
 
 class BaseApp extends StatelessWidget {
-  const BaseApp({Key? key, required this.dashboard}) : super(key: key);
-
   final Widget dashboard;
+
+  const BaseApp({Key? key, required this.dashboard}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    // TODO set up websocket stuff with context
-
-    return MultiProvider(
-      // set up providers for values
-      providers: [
-        Provider<SpeedModel>(create: (context) => SpeedModel()),
-        Provider<CruiseControl>(create: (context) => CruiseControl())
-      ],
-      child: MaterialApp(
-        title: 'Gato Del Sol 7',
-        home: dashboard,
-      ),
+    return MaterialApp(
+      title: 'Dashboard',
+      home: dashboard,
     );
   }
 }

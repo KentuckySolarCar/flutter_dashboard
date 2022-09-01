@@ -1,4 +1,4 @@
-import 'package:flutter_dashboard/models/speed.dart';
+import 'package:uksc_dashboard/models/speed.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
