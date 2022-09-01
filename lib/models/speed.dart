@@ -4,9 +4,9 @@ class SpeedModel extends ChangeNotifier {
   double _speed = 0; // mph
 
   /// The speed of the car in mph.
-  double get speed => _speed;
+  double get mph => _speed;
 
-  set speed(double speed) {
+  set mph(double speed) {
     _speed = speed;
     notifyListeners();
   }

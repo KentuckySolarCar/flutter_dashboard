@@ -3,8 +3,9 @@ import 'package:args/args.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/status.dart';
 import 'package:provider/provider.dart';
-import 'package:cole_dashboard/models/speed.dart';
-import 'package:cole_dashboard/models/cruise_control.dart';
+import 'package:flutter_dashboard/models/speed.dart';
+import 'package:flutter_dashboard/models/cruise_control.dart';
+import 'package:flutter_dashboard/dashboards/basic.dart';
 
 void main(List<String> args) {
   var parser = ArgParser();
@@ -21,11 +22,11 @@ void main(List<String> args) {
 
   switch (results['dashboard']) {
     case '1':
-      runApp(BaseApp(dashboard: dashboard));
+      runApp(const BaseApp(dashboard: BasicDashboard()));
       break;
     case '2':
-    // TODO launch a different dashboard
-      runApp(BaseApp(dashboard: dashboard));
+      // TODO launch a different dashboard
+      runApp(const BaseApp(dashboard: BasicDashboard()));
       break;
   }
 }

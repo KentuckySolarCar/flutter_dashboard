@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.15)
 project(runner LANGUAGES CXX)
 
-set(BINARY_NAME "cole_dasboard")
+set(BINARY_NAME "flutter_dashboard")
 
 cmake_policy(SET CMP0063 NEW)
 
