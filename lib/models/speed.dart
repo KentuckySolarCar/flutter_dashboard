@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 
-class SpeedModel extends ChangeNotifier {
+class Speed with ChangeNotifier {
   double _speed = 0; // mph
 
   /// The speed of the car in mph.

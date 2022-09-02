@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 
-class CruiseControl extends ChangeNotifier {
+class CruiseControl with ChangeNotifier {
   double _setPoint = 0;
   bool _active = false;
   bool _main = false;

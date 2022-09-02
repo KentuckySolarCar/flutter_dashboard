@@ -14,9 +14,9 @@ class BasicDashboard extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Consumer<SpeedModel>(
+          Consumer<Speed>(
             builder: (context, speed, child) {
-              return Text('${speed.mph.toStringAsFixed(2)} MPH');
+              return Text('${speed.mph.toStringAsFixed(1)} MPH');
             },
           ),
         ],

@@ -24,7 +24,7 @@ void main(List<String> args) {
   // initialize providers
   // final speedProvider = Provider<SpeedModel>(create: (_) => SpeedModel());
   // final cruiseControlProvider = Provider<CruiseControl>(create: (_) => CruiseControl());
-  final speedModel = SpeedModel();
+  final speedModel = Speed();
   final cruiseControl = CruiseControl();
 
   // async function timer thing to run speedModel.mph = 50 after 30 seconds
