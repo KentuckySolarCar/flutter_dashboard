@@ -9,6 +9,7 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 
 import 'package:uksc_dashboard/constants.dart';
 import 'package:uksc_dashboard/models/speed.dart';
+import 'package:uksc_dashboard/models/motors.dart';
 import 'package:uksc_dashboard/models/cruise_control.dart';
 import 'package:uksc_dashboard/dashboards/basic.dart';
 
@@ -24,15 +25,19 @@ void main(List<String> args) {
   // initialize providers
   // final speedProvider = Provider<SpeedModel>(create: (_) => SpeedModel());
   // final cruiseControlProvider = Provider<CruiseControl>(create: (_) => CruiseControl());
-  final speedModel = Speed();
+  final speed = Speed();
   final cruiseControl = CruiseControl();
+  final leftMotor = LeftMotor();
+  final rightMotor = RightMotor();
 
-  // async function timer thing to run speedModel.mph = 50 after 30 seconds
+
+
+  // async function timer thing to run speed.mph = 50 after 30 seconds
   Future.delayed(const Duration(seconds: 5), () {
     print('Starting speed simulation');
     // set the speed using a sin wave between 0-100 every 0.01 seconds
     Timer.periodic(const Duration(milliseconds: 10), (timer) {
-      speedModel.mph = (sin(timer.tick * 0.01) * 50).toDouble() + 50;
+      speed.mph = (sin(timer.tick * 0.01) * 50).toDouble() + 50;
     });
   });
 
@@ -49,7 +54,7 @@ void main(List<String> args) {
     case '1':
       runApp(MultiProvider(
         providers: [
-          ChangeNotifierProvider.value(value: speedModel),
+          ChangeNotifierProvider.value(value: speed),
           ChangeNotifierProvider.value(value: cruiseControl),
         ],
         child: const BaseApp(dashboard: BasicDashboard()),
@@ -58,7 +63,7 @@ void main(List<String> args) {
     case '2':
       runApp(MultiProvider(
         providers: [
-          ChangeNotifierProvider.value(value: speedModel),
+          ChangeNotifierProvider.value(value: speed),
           ChangeNotifierProvider.value(value: cruiseControl),
         ],
         child: const BaseApp(dashboard: BasicDashboard()),
@@ -68,7 +73,7 @@ void main(List<String> args) {
     default:
       runApp(MultiProvider(
         providers: [
-          ChangeNotifierProvider.value(value: speedModel),
+          ChangeNotifierProvider.value(value: speed),
           ChangeNotifierProvider.value(value: cruiseControl),
         ],
         child: const BaseApp(dashboard: BasicDashboard()),
