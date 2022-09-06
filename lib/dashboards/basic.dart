@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import 'package:uksc_dashboard/widgets/basic_speed.dart';
-import 'package:uksc_dashboard/widgets/basic_speed_gauge.dart';
 import 'package:uksc_dashboard/widgets/connection_status.dart';
 
 /// A basic dashboard displaying simple stuff such as the speed.
