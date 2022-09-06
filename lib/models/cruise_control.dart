@@ -1,4 +1,4 @@
-
+import 'package:provider/provider.dart';
 import 'package:uksc_dashboard/models/generic.dart';
 
 class CruiseControl extends BaseModel {
@@ -12,4 +12,7 @@ class CruiseControl extends BaseModel {
 
   /// Whether cruise control is on (not set, inactive, not in control)
   bool get main => data['main']!;
+
+  @override
+  ChangeNotifierProvider<CruiseControl> get provider => ChangeNotifierProvider.value(value: this);
 }

@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import 'package:uksc_dashboard/models/cruise_control.dart';
 import 'package:uksc_dashboard/models/motors.dart';
 import 'package:uksc_dashboard/models/speed.dart';
+import 'package:uksc_dashboard/models/generic.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 enum Status { disconnected, connecting, connected }
@@ -51,15 +52,13 @@ class WebSocketManager extends ChangeNotifier {
   late WebSocketChannel _websocket;
 
   final webSocketStatus = WebSocketStatus();
-  
-  final carModels = [
+
+  final List<BaseModel> carModels = [
     Speed(),
     LeftMotor(),
     RightMotor(),
     CruiseControl(),
   ];
-
-  late final List<ChangeNotifierProvider> providers;
 
   WebSocketManager(this.uri, {testing=false}) {
     if (testing) {
@@ -69,8 +68,8 @@ class WebSocketManager extends ChangeNotifier {
         print('Starting speed simulation');
         // set the speed using a sin wave between 0-100 every 0.01 seconds
         Timer.periodic(const Duration(milliseconds: 10), (timer) {
-          var newData = {'speed': (sin(timer.tick * 0.01) * 50).toDouble() + 50};
-          for (var model in carModels) {
+          final newData = {'speed': (sin(timer.tick * 0.01) * 50).toDouble() + 50};
+          for (final model in carModels) {
             model.updateFromJson(newData);
           }
         });
@@ -78,12 +77,6 @@ class WebSocketManager extends ChangeNotifier {
     } else {
       _connect();
     }
-    
-    // create a list of ChangeNotifierProviders for each car model, as well as webSocketStatus]
-    providers = [
-      ChangeNotifierProvider.value(value: this),ChangeNotifierProvider.value(value: webSocketStatus),
-      ...carModels.map((model) => ChangeNotifierProvider.value(value: model)),
-    ];
   }
 
   /// initialize websocket on uri
@@ -99,7 +92,7 @@ class WebSocketManager extends ChangeNotifier {
       try {
         final data = json.decode(message);
         // update models (indiscriminately, since it doesn't matter if no relevant keys for a model exist)
-        for (var model in carModels) {
+        for (final model in carModels) {
           model.updateFromJson(data);
         }
       } catch (e) {

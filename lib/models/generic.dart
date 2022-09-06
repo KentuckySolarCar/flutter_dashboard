@@ -1,4 +1,5 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class BaseModel extends ChangeNotifier {
   /// key value data pairs, keys should match what we expect to have to parse
@@ -9,9 +10,9 @@ class BaseModel extends ChangeNotifier {
   /// The last time the data was updated
   var lastUpdated = DateTime.now();
 
-  /// updates the data from a json object, if possible.
+  /// Updates the data from a json object, if possible.
   ///
-  /// Notifies listener if data is changed. Must be able to handle any data not being present.
+  /// Notifies listener if data is changed. Must be able to handle keys not being present.
   /// Returns true if the data was updated, false otherwise.
   bool updateFromJson(Map<String, dynamic> newData) {
     var updated = false;
@@ -29,4 +30,8 @@ class BaseModel extends ChangeNotifier {
     }
     return updated;
   }
+
+  /// The provider for this model.
+  // Must be overridden by subclasses to ensure that the provider has the correct type.
+  ChangeNotifierProvider<BaseModel> get provider => ChangeNotifierProvider.value(value: this);
 }

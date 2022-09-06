@@ -15,32 +15,34 @@ void main(List<String> args) {
   parser.addOption('port', abbr: 'p', help: 'Webserver port', defaultsTo: defaultPort.toString());
   final userArgs = parser.parse(args);
 
-  final webSocketManager =
-      WebSocketManager(Uri(scheme: 'wss', host: userArgs['host'], port: int.tryParse(userArgs['port']) ?? defaultPort));
+  final webSocketManager = WebSocketManager(
+      Uri(scheme: 'wss', host: userArgs['host'], port: int.tryParse(userArgs['port']) ?? defaultPort),
+      testing: true);
 
-  // don't be clever, I know a lot of this code is shared. Read up on how const works in dart and you'll understand why
-  // I'm doing this. Specifically, const BaseApp(dashboard: BasicDashboard()) is able to be compiled because the
-  // dashboard is also const. If you try to split the only thing that changes (dashboard) in to a separate variable,
-  // you will no longer be able to instantiate BaseApp, since it is a const class requiring a const dashboard, and it is
-  // impossible to tell at compile time what it should be. The current way basically compiles each possible way, and
-  // then switches between them at runtime.
+  final providers = [
+    // expose the websocket manager. This won't ever call notifyListeners(), but allows us to access it from anywhere
+    ChangeNotifierProvider.value(value: webSocketManager),
+    ChangeNotifierProvider.value(value: webSocketManager.webSocketStatus),
+    ...webSocketManager.carModels.map((e) => e.provider),
+  ];
+
   switch (userArgs['dashboard']) {
     case '1':
       runApp(MultiProvider(
-        providers: webSocketManager.providers,
+        providers: providers,
         child: const BaseApp(dashboard: BasicDashboard()),
       ));
       break;
     case '2':
       runApp(MultiProvider(
-        providers: webSocketManager.providers,
+        providers: providers,
         child: const BaseApp(dashboard: BasicDashboard()),
       ));
       break;
     case 'basic':
     default:
       runApp(MultiProvider(
-        providers: webSocketManager.providers,
+        providers: providers,
         child: const BaseApp(dashboard: BasicDashboard()),
       ));
   }

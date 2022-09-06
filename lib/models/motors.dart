@@ -1,3 +1,4 @@
+import 'package:provider/provider.dart';
 import 'package:uksc_dashboard/models/generic.dart';
 
 class _Motor extends BaseModel {
@@ -87,6 +88,12 @@ class _Motor extends BaseModel {
 }
 
 // create classes for both motors so we can have separate providers
-class LeftMotor extends _Motor {}
+class LeftMotor extends _Motor {
+  @override
+  ChangeNotifierProvider<LeftMotor> get provider => ChangeNotifierProvider.value(value: this);
+}
 
-class RightMotor extends _Motor {}
+class RightMotor extends _Motor {
+  @override
+  ChangeNotifierProvider<RightMotor> get provider => ChangeNotifierProvider.value(value: this);
+}
