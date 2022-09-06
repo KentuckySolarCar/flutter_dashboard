@@ -1,5 +1,5 @@
 
-import 'package:uksc_dashboard/models/base.dart';
+import 'package:uksc_dashboard/models/generic.dart';
 
 class CruiseControl extends BaseModel {
   CruiseControl() : super({'set_point': 0.0, 'active': false, 'main': false});

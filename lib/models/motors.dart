@@ -1,4 +1,4 @@
-import 'package:uksc_dashboard/models/base.dart';
+import 'package:uksc_dashboard/models/generic.dart';
 
 class _Motor extends BaseModel {
   // keys should match what we expect to have to parse

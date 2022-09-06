@@ -1,4 +1,4 @@
-import 'package:uksc_dashboard/models/base.dart';
+import 'package:uksc_dashboard/models/generic.dart';
 
 class Speed extends BaseModel {
   Speed() : super({'speed': 0.0});
