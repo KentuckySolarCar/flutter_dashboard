@@ -1,68 +1,89 @@
-import 'package:flutter/foundation.dart';
+import 'package:uksc_dashboard/models/base.dart';
 
-class _Motor with ChangeNotifier {
-  double _motorCurrent = 0.0; // percent
-  double _motorPower = 0.0; // percent
+class _Motor extends BaseModel {
+  // keys should match what we expect to have to parse
+  _Motor()
+      : super({
+          'motorCurrent': 0.0,
+          'motorPower': 0.0,
+          'motorVelocityRpm': 0.0,
+          'motorVelocityMs': 0.0,
+          'motorAngularVelocity': 0.0,
+          'busCurrent': 0.0,
+          'busVoltage': 0.0,
+          'phaseCCurrent': 0.0,
+          'phaseBCurrent': 0.0,
+          'voltageVectorReal': 0.0,
+          'voltageVectorImaginary': 0.0,
+          'currentVectorReal': 0.0,
+          'currentVectorImaginary': 0.0,
+          'backEmfD': 0.0,
+          'backEmfQ': 0.0,
+          'rail15v': 0.0,
+          'rail3v3': 0.0,
+          'rail1v9': 0.0,
+          'ipmTemperature': 0.0,
+          'motorTemperature': 0.0,
+          'dspBoardTemperature': 0.0,
+          'dcBusAmpHours': 0.0,
+          'odometer': 0.0,
+          'slipSpeed': 0.0
+        });
 
-  double _motorVelocityRpm = 0.0; // rpm
-  double _motorVelocityMs = 0.0; // m/s
-  double _motorAngularVelocity = 0.0; // rpm
+  // getter methods for each value in _data
+  /// percentage of maximum
+  double get motorCurrent => data['motorCurrent']!;
 
-  double _busCurrent = 0.0; // amps
-  double _busVoltage = 0.0; // volts
+  /// percentage of maximum
+  double get motorPower => data['motorPower']!;
 
-  double _phaseCCurrent = 0.0;
-  double _phaseBCurrent = 0.0;
+  double get motorVelocityRpm => data['motorVelocityRpm']!;
 
-  double _voltageVectorReal = 0.0;
-  double _voltageVectorImaginary = 0.0;
+  double get motorVelocityMs => data['motorVelocityMs']!;
 
-  double _currentVectorReal = 0.0;
-  double _currentVectorImaginary = 0.0;
+  double get motorAngularVelocity => data['motorAngularVelocity']!;
 
-  double _backEmfD = 0.0;
-  double _backEmfQ = 0.0;
+  double get busCurrent => data['busCurrent']!;
 
-  double _rail15v = 0.0;
-  double _rail3v3 = 0.0;
-  double _rail1v9 = 0.0;
+  double get busVoltage => data['busVoltage']!;
 
-  double _ipmTemperature = 0.0; // celsius
-  double _motorTemperature = 0.0; // celsius
-  double _dspBoardTemperature = 0.0; // celsius
+  double get phaseCCurrent => data['phaseCCurrent']!;
 
-  double _dcBusAmpHours = 0.0; // amp hours
-  double _odometer = 0.0; // meters
-  double _slipSpeed = 0.0; // hz
+  double get phaseBCurrent => data['phaseBCurrent']!;
 
-  // we need a method to update these values, parsing them from JSON. They may not all be present in the JSON. If any
-  // got updated, we need to notify listeners. We don't want to notify listeners until the end of the update method.
-  void updateFromJson(Map<String, dynamic> data) {
-    _motorCurrent = data['motorCurrent'] ?? _motorCurrent;
-    _motorPower = data['motorPower'] ?? _motorPower;
-    _motorVelocityRpm = data['motorVelocityRpm'] ?? _motorVelocityRpm;
-    _motorVelocityMs = data['motorVelocityMs'] ?? _motorVelocityMs;
-    _motorAngularVelocity = data['motorAngularVelocity'] ?? _motorAngularVelocity;
-    _busCurrent = data['busCurrent'] ?? _busCurrent;
-    _busVoltage = data['busVoltage'] ?? _busVoltage;
-    _phaseCCurrent = data['phaseCCurrent'] ?? _phaseCCurrent;
-    _phaseBCurrent = data['phaseBCurrent'] ?? _phaseBCurrent;
-    _voltageVectorReal = data['voltageVectorReal'] ?? _voltageVectorReal;
-    _voltageVectorImaginary = data['voltageVectorImaginary'] ?? _voltageVectorImaginary;
-    _currentVectorReal = data['currentVectorReal'] ?? _currentVectorReal;
-    _currentVectorImaginary = data['currentVectorImaginary'] ?? _currentVectorImaginary;
-    _backEmfD = data['backEmfD'] ?? _backEmfD;
-    _backEmfD = data['backEmfD'] ?? _backEmfD;
-    _rail15v = data['rail15v'] ?? _rail15v;
-    _rail3v3 = data['rail3v3'] ?? _rail3v3;
-    _rail1v9 = data['rail1v9'] ?? _rail1v9;
-    _ipmTemperature = data['ipmTemperature'] ?? _ipmTemperature;
-    _motorTemperature = data['motorTemperature'] ?? _motorTemperature;
-    _dspBoardTemperature = data['dspBoardTemperature'] ?? _dspBoardTemperature;
-    _dcBusAmpHours = data['dcBusAmpHours'] ?? _dcBusAmpHours;
-    _odometer = data['odometer'] ?? _odometer;
-    _slipSpeed = data['slipSpeed'] ?? _slipSpeed;
-  }
+  double get voltageVectorReal => data['voltageVectorReal']!;
+
+  double get voltageVectorImaginary => data['voltageVectorImaginary']!;
+
+  double get currentVectorReal => data['currentVectorReal']!;
+
+  double get currentVectorImaginary => data['currentVectorImaginary']!;
+
+  double get backEmfD => data['backEmfD']!;
+
+  double get backEmfQ => data['backEmfQ']!;
+
+  double get rail15v => data['rail15v']!;
+
+  double get rail3v3 => data['rail3v3']!;
+
+  double get rail1v9 => data['rail1v9']!;
+
+  /// celsius
+  double get ipmTemperature => data['ipmTemperature']!;
+
+  /// celsius
+  double get motorTemperature => data['motorTemperature']!;
+
+  /// celsius
+  double get dspBoardTemperature => data['dspBoardTemperature']!;
+
+  double get dcBusAmpHours => data['dcBusAmpHours']!;
+
+  double get odometer => data['odometer']!;
+
+  /// hz
+  double get slipSpeed => data['slipSpeed']!;
 }
 
 // create classes for both motors so we can have separate providers

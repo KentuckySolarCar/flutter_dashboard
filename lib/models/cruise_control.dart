@@ -1,29 +1,15 @@
-import 'package:flutter/foundation.dart';
 
-class CruiseControl with ChangeNotifier {
-  double _setPoint = 0;
-  bool _active = false;
-  bool _main = false;
+import 'package:uksc_dashboard/models/base.dart';
+
+class CruiseControl extends BaseModel {
+  CruiseControl() : super({'set_point': 0.0, 'active': false, 'main': false});
 
   /// The set point in mph
-  double get setPoint => _setPoint;
-
-  set setPoint(double setPoint) {
-    _setPoint = setPoint;
-    notifyListeners();
-  }
+  double get setPoint => data['set_point']!;
 
   /// Whether cruise control is actively in control of modulating speed
-  bool get active => _active;
-  set active(bool active) {
-    _active = active;
-    notifyListeners();
-  }
+  bool get active => data['active']!;
 
   /// Whether cruise control is on (not set, inactive, not in control)
-  bool get main => _main;
-  set main(bool main) {
-    _main = main;
-    notifyListeners();
-  }
+  bool get main => data['main']!;
 }

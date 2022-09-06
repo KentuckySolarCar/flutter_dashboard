@@ -1,19 +1,14 @@
-import 'package:flutter/foundation.dart';
+import 'package:uksc_dashboard/models/base.dart';
 
-class Speed with ChangeNotifier {
-  double _speed = 0; // mph
+class Speed extends BaseModel {
+  Speed() : super({'speed': 0.0});
 
   /// The speed of the car in mph.
-  double get mph => _speed;
-
-  set mph(double speed) {
-    _speed = speed;
-    notifyListeners();
-  }
+  double get mph => data['speed']!;
 
   /// The speed of the car in km/h.
-  double get kmh => _speed * 1.60934;
+  double get kmh => data['speed']! * 1.60934;
 
   /// The speed of the car in m/s.
-  double get ms => _speed * 0.44704;
+  double get ms => data['speed']! * 0.44704;
 }

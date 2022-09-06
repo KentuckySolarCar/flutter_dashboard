@@ -26,18 +26,18 @@ void main(List<String> args) {
   // final speedProvider = Provider<SpeedModel>(create: (_) => SpeedModel());
   // final cruiseControlProvider = Provider<CruiseControl>(create: (_) => CruiseControl());
   final speed = Speed();
+
   final cruiseControl = CruiseControl();
   final leftMotor = LeftMotor();
   final rightMotor = RightMotor();
-
-
 
   // async function timer thing to run speed.mph = 50 after 30 seconds
   Future.delayed(const Duration(seconds: 5), () {
     print('Starting speed simulation');
     // set the speed using a sin wave between 0-100 every 0.01 seconds
     Timer.periodic(const Duration(milliseconds: 10), (timer) {
-      speed.mph = (sin(timer.tick * 0.01) * 50).toDouble() + 50;
+      var newData = {'speed': (sin(timer.tick * 0.01) * 50).toDouble() + 50};
+      speed.updateFromJson(newData);
     });
   });
 
