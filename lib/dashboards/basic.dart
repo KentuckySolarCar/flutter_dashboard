@@ -1,6 +1,6 @@
-import 'package:uksc_dashboard/models/speed.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+
+import 'package:uksc_dashboard/widgets/basic_speed.dart';
 
 /// A basic dashboard displaying simple stuff such as the speed.
 ///
@@ -13,13 +13,7 @@ class BasicDashboard extends StatelessWidget {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Consumer<Speed>(
-            builder: (context, speed, child) {
-              return Text('${speed.mph.toStringAsFixed(1)} MPH');
-            },
-          ),
-        ],
+        children: const [BasicSpeed()],
       ),
     );
   }
