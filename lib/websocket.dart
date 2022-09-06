@@ -4,8 +4,6 @@ import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 
-import 'package:provider/provider.dart';
-
 import 'package:uksc_dashboard/models/cruise_control.dart';
 import 'package:uksc_dashboard/models/motors.dart';
 import 'package:uksc_dashboard/models/speed.dart';
@@ -17,6 +15,7 @@ enum Status { disconnected, connecting, connected }
 class WebSocketStatus extends ChangeNotifier {
   var _status = Status.disconnected;
   var _numErrors = 0;
+  final _latencyList = List<int>.filled(10, 0);
 
   Status get status => _status;
 
@@ -28,8 +27,28 @@ class WebSocketStatus extends ChangeNotifier {
   bool get areErrorsPresent => _numErrors != 0;
 
   int get numErrors => _numErrors;
+
   set numErrors(int newNumErrors) {
     _numErrors = newNumErrors;
+    notifyListeners();
+  }
+
+  /// The average latency over the last 10 messages, in nanoseconds.
+  int get latency {
+    var sum = 0.0;
+    for (var i = 0; i < _latencyList.length; i++) {
+      sum += _latencyList[i];
+    }
+    return sum ~/ _latencyList.length;
+  }
+
+  /// The average latency over the last 10 messages, in milliseconds.
+  int get latencyMs => latency ~/ 1000000;
+
+  /// adds a new latency value to the list and removes the oldest value
+  void addLatency(int newLatency) {
+    _latencyList.removeAt(0);
+    _latencyList.add(newLatency);
     notifyListeners();
   }
 
@@ -60,7 +79,7 @@ class WebSocketManager extends ChangeNotifier {
     CruiseControl(),
   ];
 
-  WebSocketManager(this.uri, {testing=false}) {
+  WebSocketManager(this.uri, {testing = false}) {
     if (testing) {
       // for testing purposes:
       // async function timer thing to run speed.mph = 50 after 30 seconds
@@ -91,6 +110,15 @@ class WebSocketManager extends ChangeNotifier {
       // check if message is json
       try {
         final data = json.decode(message);
+        // attempt to get timestamp in nanoseconds
+        if (data.containsKey('timestamp') && data['timestamp'] is int) {
+          final latency = DateTime.now().difference(DateTime.fromMicrosecondsSinceEpoch(data['timestamp'] ~/ 1000)).inMicroseconds;
+          webSocketStatus.addLatency(latency);
+        } else {
+          print('No valid timestamp found in message: $message');
+          webSocketStatus.numErrors++;
+        }
+
         // update models (indiscriminately, since it doesn't matter if no relevant keys for a model exist)
         for (final model in carModels) {
           model.updateFromJson(data);
