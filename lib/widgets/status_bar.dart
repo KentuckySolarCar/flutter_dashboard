@@ -74,24 +74,33 @@ class ConnectionStatus extends StatelessWidget {
       switch (webSocketStatus.status) {
         case Status.connected:
           statusWidget = Row(children: [
-            const Icon(Icons.sync, size: 24, color: Colors.green),
-            Text('(${webSocketStatus.averageLatencyMs.toStringAsFixed(1)}ms)',
-                style: Theme.of(context).textTheme.titleMedium, textAlign: TextAlign.center)
+            Container(
+                margin: const EdgeInsets.symmetric(horizontal: 2),
+                child: const Icon(Icons.sync, size: 24, color: Colors.green)),
+            Container(
+                margin: const EdgeInsets.symmetric(horizontal: 2),
+                child: Text('(${webSocketStatus.averageLatencyMs.toStringAsFixed(1)}ms)',
+                    style: Theme.of(context).textTheme.titleMedium, textAlign: TextAlign.center))
           ]);
           break;
         case Status.connecting:
           statusWidget = Row(children: [
-            const Center(
-                child: Padding(
-                    padding: EdgeInsets.fromLTRB(4.0, 0.0, 10.0, 0.0),
-                    child: SizedBox(
-                        height: 16,
-                        width: 16,
-                        child: CircularProgressIndicator(
-                          value: null,
-                          strokeWidth: 3,
-                        )))),
-            Text('Connecting...', style: Theme.of(context).textTheme.titleMedium, textAlign: TextAlign.center),
+            Container(
+                margin: const EdgeInsets.symmetric(horizontal: 2),
+                child: const Center(
+                    child: Padding(
+                        padding: EdgeInsets.fromLTRB(4.0, 0.0, 10.0, 0.0),
+                        child: SizedBox(
+                            height: 16,
+                            width: 16,
+                            child: CircularProgressIndicator(
+                              value: null,
+                              strokeWidth: 3,
+                            ))))),
+            Container(
+                margin: const EdgeInsets.symmetric(horizontal: 2),
+                child:
+                    Text('Connecting...', style: Theme.of(context).textTheme.titleMedium, textAlign: TextAlign.center)),
           ]);
           break;
         case Status.disconnected:
@@ -99,10 +108,7 @@ class ConnectionStatus extends StatelessWidget {
           break;
       }
 
-      return SizedBox(
-          height: statusBarHeight,
-          width: null,
-          child: Container(margin: const EdgeInsets.symmetric(vertical: 2, horizontal: 4), child: statusWidget));
+      return SizedBox(height: statusBarHeight, width: null, child: statusWidget);
     });
   }
 }
