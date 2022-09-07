@@ -50,14 +50,14 @@ class Clock extends StatelessWidget {
       stream: Stream.periodic(const Duration(seconds: 1)),
       builder: (context, snapshot) {
         return SizedBox(
-            height: 30,
-            width: 80,
+            height: statusBarHeight,
+            width: 70,
             child: Container(
-                margin: const EdgeInsets.symmetric(vertical: 4.5, horizontal: 4),
+                margin: const EdgeInsets.symmetric(vertical: 7, horizontal: 4),
                 child: Text(
-                  '${DateTime.now().hour.toString().padLeft(2, '0')}:${DateTime.now().minute.toString().padLeft(2, '0')}:${DateTime.now().second.toString().padLeft(2, '0')}',
-                  style: Theme.of(context).textTheme.titleMedium,
-                )));
+                    '${DateTime.now().hour.toString().padLeft(2, '0')}:${DateTime.now().minute.toString().padLeft(2, '0')}:${DateTime.now().second.toString().padLeft(2, '0')}',
+                    style: Theme.of(context).textTheme.titleMedium,
+                    textAlign: TextAlign.center)));
       },
     );
   }
@@ -75,8 +75,8 @@ class ConnectionStatus extends StatelessWidget {
         case Status.connected:
           statusWidget = Row(children: [
             const Icon(Icons.sync, size: 24, color: Colors.green),
-            Text(' (${webSocketStatus.averageLatencyMs.toStringAsFixed(1)}ms)',
-                style: Theme.of(context).textTheme.titleMedium)
+            Text('(${webSocketStatus.averageLatencyMs.toStringAsFixed(1)}ms)',
+                style: Theme.of(context).textTheme.titleMedium, textAlign: TextAlign.center)
           ]);
           break;
         case Status.connecting:
@@ -91,7 +91,7 @@ class ConnectionStatus extends StatelessWidget {
                           value: null,
                           strokeWidth: 3,
                         )))),
-            Text('Connecting...', style: Theme.of(context).textTheme.titleMedium),
+            Text('Connecting...', style: Theme.of(context).textTheme.titleMedium, textAlign: TextAlign.center),
           ]);
           break;
         case Status.disconnected:
@@ -100,7 +100,7 @@ class ConnectionStatus extends StatelessWidget {
       }
 
       return SizedBox(
-          height: 30,
+          height: statusBarHeight,
           width: null,
           child: Container(margin: const EdgeInsets.symmetric(vertical: 2, horizontal: 4), child: statusWidget));
     });
