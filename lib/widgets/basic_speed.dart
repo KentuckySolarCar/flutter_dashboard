@@ -20,7 +20,7 @@ class BasicSpeed extends StatelessWidget {
           color = Colors.orange;
         }
 
-        return Text('${speed.mph.toStringAsFixed(1)} MPH',
+        return Text('${speed.mph.toStringAsFixed(0)} MPH',
             style: TextStyle(
               fontSize: 40,
               color: color,
@@ -53,7 +53,7 @@ class BasicSpeedGauge extends StatelessWidget {
             pointers: <GaugePointer>[NeedlePointer(value: speed.mph)],
             annotations: <GaugeAnnotation>[
               GaugeAnnotation(
-                  widget: Text('${speed.mph.toStringAsFixed(1)} MPH',
+                  widget: Text('${speed.mph.toStringAsFixed(0)} MPH',
                       style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
                   angle: 90,
                   positionFactor: 0.5)

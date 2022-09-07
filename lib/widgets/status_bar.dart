@@ -14,17 +14,53 @@ class StatusBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        const ConnectionStatus(),
-        ...?children,
-      ],
-    );
+    final appBarTheme = Theme.of(context).appBarTheme;
+
+    return Material(
+        // no elevation default :(
+        elevation: appBarTheme.elevation ?? statusBarElevation,
+        color: appBarTheme.backgroundColor,
+        shadowColor: appBarTheme.shadowColor,
+        surfaceTintColor: appBarTheme.surfaceTintColor,
+        shape: appBarTheme.shape,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            const ConnectionStatus(),
+            const Expanded(
+                child: Align(
+              alignment: Alignment.centerRight,
+              child: Clock(),
+            )),
+            ...?children,
+          ],
+        ));
   }
 
   @override
   Size get preferredSize => const Size.fromHeight(statusBarHeight);
+}
+
+class Clock extends StatelessWidget {
+  const Clock({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder(
+      stream: Stream.periodic(const Duration(seconds: 1)),
+      builder: (context, snapshot) {
+        return SizedBox(
+            height: 30,
+            width: 80,
+            child: Container(
+                margin: const EdgeInsets.symmetric(vertical: 4.5, horizontal: 4),
+                child: Text(
+                  '${DateTime.now().hour.toString().padLeft(2, '0')}:${DateTime.now().minute.toString().padLeft(2, '0')}:${DateTime.now().second.toString().padLeft(2, '0')}',
+                  style: Theme.of(context).textTheme.titleMedium,
+                )));
+      },
+    );
+  }
 }
 
 /// Widget that displays the websocket connection status in a friendly manner
@@ -33,7 +69,7 @@ class ConnectionStatus extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(child: Consumer<WebSocketStatus>(builder: (context, webSocketStatus, child) {
+    return Consumer<WebSocketStatus>(builder: (context, webSocketStatus, child) {
       Widget statusWidget;
       switch (webSocketStatus.status) {
         case Status.connected:
@@ -67,6 +103,6 @@ class ConnectionStatus extends StatelessWidget {
           height: 30,
           width: null,
           child: Container(margin: const EdgeInsets.symmetric(vertical: 2, horizontal: 4), child: statusWidget));
-    }));
+    });
   }
 }

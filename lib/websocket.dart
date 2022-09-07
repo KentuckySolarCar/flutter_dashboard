@@ -95,7 +95,7 @@ class WebSocketManager extends ChangeNotifier {
       Future.delayed(const Duration(seconds: 5), () {
         print('Starting speed simulation');
         // set the speed using a sin wave between 0-100 every 0.01 seconds
-        Timer.periodic(const Duration(milliseconds: 10), (timer) {
+        Timer.periodic(const Duration(milliseconds: 30), (timer) {
           webSocketStatus.status = Status.connected;
           // generate random nanosecond value between 1000000 and 3000000
           final latency = Random().nextInt(2000000) + 1000000;
