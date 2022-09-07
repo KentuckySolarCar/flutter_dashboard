@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:uksc_dashboard/widgets/basic_speed.dart';
-import 'package:uksc_dashboard/widgets/connection_status.dart';
+import 'package:uksc_dashboard/widgets/status_bar.dart';
 
 /// A basic dashboard displaying simple stuff such as the speed.
 ///
@@ -11,11 +11,13 @@ class BasicDashboard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: const [ConnectionStatus(), BasicSpeed(), BasicSpeedGauge()],
-      ),
-    );
+    return Scaffold(
+        appBar: const PreferredSize(preferredSize: Size.fromHeight(50), child: StatusBar()),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: const [BasicSpeed(), BasicSpeedGauge()],
+          ),
+        ));
   }
 }

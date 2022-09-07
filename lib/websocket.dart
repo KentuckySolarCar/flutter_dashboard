@@ -14,6 +14,7 @@ enum Status { disconnected, connecting, connected }
 
 class WebSocketStatus extends ChangeNotifier {
   var _status = Status.disconnected;
+
   var _numErrors = 0;
   final _latencyList = List<int>.filled(10, 0);
 
