@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:uksc_dashboard/websocket.dart';
+import 'package:uksc_dashboard/constants.dart';
 
-class StatusBar extends StatelessWidget {
+/// Represents a status bar, displaying essential information such as connection status, time, etc.
+///
+/// This widget is meant to be used as an [AppBar] for the [Scaffold] of a dashboard. Can be passed
+/// a list of [Widget]s to display on the status bar.
+class StatusBar extends StatelessWidget implements PreferredSizeWidget {
   final List<Widget>? children;
 
   const StatusBar({Key? key, this.children}) : super(key: key);
@@ -17,6 +22,9 @@ class StatusBar extends StatelessWidget {
       ],
     );
   }
+
+  @override
+  Size get preferredSize => const Size.fromHeight(statusBarHeight);
 }
 
 /// Widget that displays the websocket connection status in a friendly manner
@@ -31,7 +39,8 @@ class ConnectionStatus extends StatelessWidget {
         case Status.connected:
           statusWidget = Row(children: [
             const Icon(Icons.sync, size: 24, color: Colors.green),
-            Text(' (${webSocketStatus.averageLatencyMs.toStringAsFixed(1)}ms)', style: Theme.of(context).textTheme.titleMedium)
+            Text(' (${webSocketStatus.averageLatencyMs.toStringAsFixed(1)}ms)',
+                style: Theme.of(context).textTheme.titleMedium)
           ]);
           break;
         case Status.connecting:
