@@ -4,19 +4,25 @@ import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 
+import 'package:web_socket_channel/web_socket_channel.dart';
+
 import 'package:uksc_dashboard/models/cruise_control.dart';
 import 'package:uksc_dashboard/models/motors.dart';
 import 'package:uksc_dashboard/models/speed.dart';
 import 'package:uksc_dashboard/models/generic.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
+import 'package:uksc_dashboard/constants.dart';
 
 enum Status { disconnected, connecting, connected }
 
+// TODO I kind of don't like how this is organized... should it be in the models directory?
 class WebSocketStatus extends ChangeNotifier {
   var _status = Status.disconnected;
 
+  // var _status = Status.connecting;
+  // var _status = Status.connected;
+
   var _numErrors = 0;
-  final _latencyList = List<int>.filled(10, 0);
+  var _recentLatencies = <int>[];
 
   Status get status => _status;
 
@@ -34,22 +40,23 @@ class WebSocketStatus extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// The average latency over the last 10 messages, in nanoseconds.
-  int get latency {
-    var sum = 0.0;
-    for (var i = 0; i < _latencyList.length; i++) {
-      sum += _latencyList[i];
+  /// The average latency, in nanoseconds.
+  int get averageLatency {
+    if (_recentLatencies.isEmpty) {
+      return 0;
     }
-    return sum ~/ _latencyList.length;
+    return _recentLatencies.reduce((a, b) => a + b) ~/ _recentLatencies.length;
   }
 
   /// The average latency over the last 10 messages, in milliseconds.
-  int get latencyMs => latency ~/ 1000000;
+  double get averageLatencyMs => averageLatency / 1000000;
 
-  /// adds a new latency value to the list and removes the oldest value
+  /// Add a new latency to the list of recent latencies.
   void addLatency(int newLatency) {
-    _latencyList.removeAt(0);
-    _latencyList.add(newLatency);
+    _recentLatencies.add(newLatency);
+    if (_recentLatencies.length > latencyAverageCount) {
+      _recentLatencies.removeAt(0);
+    }
     notifyListeners();
   }
 
@@ -84,10 +91,16 @@ class WebSocketManager extends ChangeNotifier {
     if (testing) {
       // for testing purposes:
       // async function timer thing to run speed.mph = 50 after 30 seconds
+      webSocketStatus.status = Status.connecting;
       Future.delayed(const Duration(seconds: 5), () {
         print('Starting speed simulation');
         // set the speed using a sin wave between 0-100 every 0.01 seconds
         Timer.periodic(const Duration(milliseconds: 10), (timer) {
+          webSocketStatus.status = Status.connected;
+          // generate random nanosecond value between 1000000 and 3000000
+          final latency = Random().nextInt(2000000) + 1000000;
+          webSocketStatus.addLatency(latency);
+
           final newData = {'speed': (sin(timer.tick * 0.01) * 50).toDouble() + 50};
           for (final model in carModels) {
             model.updateFromJson(newData);
@@ -113,7 +126,8 @@ class WebSocketManager extends ChangeNotifier {
         final data = json.decode(message);
         // attempt to get timestamp in nanoseconds
         if (data.containsKey('timestamp') && data['timestamp'] is int) {
-          final latency = DateTime.now().difference(DateTime.fromMicrosecondsSinceEpoch(data['timestamp'] ~/ 1000)).inMicroseconds;
+          final latency =
+              DateTime.now().difference(DateTime.fromMicrosecondsSinceEpoch(data['timestamp'] ~/ 1000)).inMicroseconds;
           webSocketStatus.addLatency(latency);
         } else {
           print('No valid timestamp found in message: $message');
