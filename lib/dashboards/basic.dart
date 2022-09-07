@@ -6,7 +6,7 @@ import 'package:uksc_dashboard/widgets/status_bar.dart';
 /// A basic dashboard displaying simple stuff such as the speed.
 ///
 /// Primarily meant for development and testing
-class BasicDashboard extends StatelessWidget implements PreferredSizeWidget {
+class BasicDashboard extends StatelessWidget {
   const BasicDashboard({Key? key}) : super(key: key);
 
   @override
@@ -20,8 +20,4 @@ class BasicDashboard extends StatelessWidget implements PreferredSizeWidget {
           ),
         ));
   }
-
-  @override
-  // TODO: implement preferredSize
-  Size get preferredSize => throw UnimplementedError();
 }
