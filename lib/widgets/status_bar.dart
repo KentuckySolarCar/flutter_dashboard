@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:uksc_dashboard/websocket.dart';
-import 'package:uksc_dashboard/constants.dart';
+import 'package:uksc_dashboard/models/websocket_status.dart';
 
 /// The preferred height of the status bar
 const statusBarHeight = 35.0;
@@ -28,7 +27,7 @@ class StatusBar extends StatelessWidget implements PreferredSizeWidget {
 
     return Material(
         // no elevation default :(
-        elevation: appBarTheme.elevation ?? statusBarElevation,
+        elevation: appBarTheme.elevation ?? 0.0,
         color: appBarTheme.backgroundColor,
         shadowColor: appBarTheme.shadowColor,
         surfaceTintColor: appBarTheme.surfaceTintColor,
@@ -57,6 +56,7 @@ class StatusBar extends StatelessWidget implements PreferredSizeWidget {
 class Clock extends StatelessWidget {
   const Clock({Key? key}) : super(key: key);
 
+  // TODO: display time zone, allow user to change timezone when clicked... and/or maybe we can use the GPS data to automatically set the default timezone
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(

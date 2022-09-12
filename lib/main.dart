@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:args/args.dart';
 import 'package:provider/provider.dart';
 
-import 'package:uksc_dashboard/constants.dart';
 import 'package:uksc_dashboard/websocket.dart';
 import 'package:uksc_dashboard/dashboards/basic.dart';
+
+const defaultPort = 1337;
+const defaultHost = '127.0.0.1';
+const defaultDashboard = 'basic';
 
 void main(List<String> args) {
   // argument setup
@@ -21,8 +24,8 @@ void main(List<String> args) {
 
   final providers = [
     // expose the websocket manager. This won't ever call notifyListeners(), but allows us to access it from anywhere
-    ChangeNotifierProvider.value(value: webSocketManager),
-    ChangeNotifierProvider.value(value: webSocketManager.webSocketStatus),
+    webSocketManager.provider,
+    webSocketManager.webSocketStatus.provider,
     ...webSocketManager.carModels.map((e) => e.provider),
   ];
 
