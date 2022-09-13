@@ -1,4 +1,4 @@
-# uksc_dashboard
+# flutter_dashboard
 
 Next-gen dashboard built in Flutter for UK solar car as a part of Project C.O.L.E.
 
