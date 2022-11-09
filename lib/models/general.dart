@@ -3,11 +3,15 @@ import 'package:uksc_dashboard/models/generic.dart';
 
 enum DriveMode { forward, reverse }
 
-enum SdStatus { failure, lowSpace, outOfSpace, ok }
-
 class CarStatus extends BaseModel {
-  // TODO what is wheel_pedal? (0x6FE CAN_BOTTOM_SHELL_SWITCH_STATUS)
-  CarStatus() : super({'array_status': 0, 'drive_mode': 0, 'regen_status': 0, 'wheel_pedal': 0, 'sd_status': -1});
+  CarStatus()
+      : super({
+          'array_status': 0,
+          'drive_mode': 0,
+          'regen_status': 0,
+          'wheel_pedal': 0,
+          'throttle': 0.0,
+        });
 
   bool get isArrayEnabled => data['array_status'] == 1;
 
@@ -15,20 +19,9 @@ class CarStatus extends BaseModel {
 
   DriveMode get driveMode => data['drive_mode'] == 1 ? DriveMode.forward : DriveMode.reverse;
 
-  double get wheelPedal => data['wheel_pedal'];
+  bool get triggerControlEnabled => data['wheel_pedal'] == 0;
 
-  SdStatus get sdStatus {
-    switch (data['sd_status']) {
-      case 0:
-        return SdStatus.failure;
-      case 1:
-        return SdStatus.lowSpace;
-      case 2:
-        return SdStatus.outOfSpace;
-      default:
-        return SdStatus.ok;
-    }
-  }
+  double get throttle => data['throttle'] * 100;
 
   @override
   ChangeNotifierProvider<CarStatus> get provider => ChangeNotifierProvider.value(value: this);

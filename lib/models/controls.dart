@@ -60,35 +60,4 @@ class SteeringWheel extends BaseModel {
   Button get buttonCruisePlus => _buttons['cruise_plus']!;
 
   Button get buttonCruiseMinus => _buttons['cruise_minus']!;
-
-  /// Updates the data from a json object, if possible.
-  ///
-  /// Notifies listener if data is changed. Must be able to handle keys not being present.
-  /// Returns true if the data was updated, false otherwise.
-  @override
-  bool updateFromJson(Map<String, dynamic> newData) {
-    // set all current values to 0
-    for (var name in _buttonNames) {
-      data['button_${name}_short'] = 0;
-      data['button_${name}_long'] = 0;
-    }
-
-    var updated = false;
-    newData.forEach((key, value) {
-      if (data.containsKey(key)) {
-        if (data[key] != value) {
-          data[key] = value;
-          updated = true;
-        }
-      }
-    });
-    if (updated) {
-      lastUpdated = DateTime.now();
-      for (var name in _buttonNames) {
-        _buttons[name] = Button(name, data['button_${name}_long'], data['button_${name}_short']);
-      }
-      notifyListeners();
-    }
-    return updated;
-  }
 }

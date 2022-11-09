@@ -39,7 +39,7 @@ class WebSocketManager extends ChangeNotifier {
       Future.delayed(const Duration(seconds: 5), () {
         print('Starting speed simulation');
         // set the speed using a sin wave between 0-100 every 0.01 seconds
-        Timer.periodic(const Duration(milliseconds: 500), (timer) {
+        Timer.periodic(const Duration(milliseconds: 50), (timer) {
           webSocketStatus.status = Status.connected;
           // generate random nanosecond value between 1000000 and 3000000
           final latency = Random().nextInt(2000000) + 1000000;
@@ -68,10 +68,10 @@ class WebSocketManager extends ChangeNotifier {
       // check if message is json
       try {
         final data = json.decode(message);
-        // attempt to get timestamp in nanoseconds
+        // attempt to get timestamp in microseconds
         if (data.containsKey('timestamp') && data['timestamp'] is int) {
           final latency =
-              DateTime.now().difference(DateTime.fromMicrosecondsSinceEpoch(data['timestamp'] ~/ 1000)).inMicroseconds;
+              DateTime.now().difference(DateTime.fromMicrosecondsSinceEpoch(data['timestamp'])).inMicroseconds;
           webSocketStatus.addLatency(latency);
         } else {
           print('No valid timestamp found in message: $message');
