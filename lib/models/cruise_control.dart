@@ -11,7 +11,7 @@ class CruiseControl extends BaseModel {
   bool get active => data['active']!;
 
   /// Whether cruise control is on (not set, inactive, not in control)
-  bool get main => data['main']!;
+  bool get enabled => data['main']!;
 
   @override
   ChangeNotifierProvider<CruiseControl> get provider => ChangeNotifierProvider.value(value: this);
