@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'package:uksc_dashboard/widgets/basic_speed.dart';
 import 'package:uksc_dashboard/widgets/status_bar.dart';
+import 'package:uksc_dashboard/widgets/cruise_control.dart';
+import 'package:uksc_dashboard/widgets/battery_current.dart';
 
 /// A basic dashboard displaying simple stuff such as the speed.
 ///
@@ -16,7 +18,12 @@ class BasicDashboard extends StatelessWidget {
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: const [BasicSpeed(), BasicSpeedGauge()],
+            children: const [
+              // BasicSpeed(),
+              // BasicSpeedGauge(),
+              // CruiseControlStatus(),
+              BatteryCurrent()
+            ],
           ),
         ));
   }

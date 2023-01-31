@@ -14,5 +14,6 @@ class CruiseControl extends BaseModel {
   bool get enabled => data['main']!;
 
   @override
-  ChangeNotifierProvider<CruiseControl> get provider => ChangeNotifierProvider.value(value: this);
+  ChangeNotifierProvider<CruiseControl> get provider =>
+      ChangeNotifierProvider.value(value: this);
 }
