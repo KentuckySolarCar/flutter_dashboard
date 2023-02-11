@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:args/args.dart';
 import 'package:provider/provider.dart';
 
-import 'package:uksc_dashboard/websocket.dart';
+import 'package:uksc_dashboard/telemetry.dart';
 import 'package:uksc_dashboard/dashboards/basic.dart';
 
 const defaultPort = 1337;
@@ -13,36 +13,44 @@ void main(List<String> args) {
   // argument setup
   final parser = ArgParser();
   parser.addOption('dashboard',
-      abbr: 'd', help: 'Dashboard to display', allowed: ['1', '2', 'basic'], defaultsTo: defaultDashboard);
-  parser.addOption('host', abbr: 'h', help: 'Webserver IP address', defaultsTo: defaultHost);
-  parser.addOption('port', abbr: 'p', help: 'Webserver port', defaultsTo: defaultPort.toString());
+      abbr: 'd',
+      help: 'Dashboard to display',
+      allowed: ['driver', 'diagnostic', 'dev'],
+      defaultsTo: defaultDashboard);
+  parser.addOption('host',
+      abbr: 'h', help: 'Webserver IP address', defaultsTo: defaultHost);
+  parser.addOption('port',
+      abbr: 'p', help: 'Webserver port', defaultsTo: defaultPort.toString());
   final userArgs = parser.parse(args);
 
-  final webSocketManager = WebSocketManager(
-      Uri(scheme: 'wss', host: userArgs['host'], port: int.tryParse(userArgs['port']) ?? defaultPort),
+  final webSocketManager = TelemetryManager(
+      Uri(
+          scheme: 'wss',
+          host: userArgs['host'],
+          port: int.tryParse(userArgs['port']) ?? defaultPort),
       testing: true);
 
   final providers = [
     // expose the websocket manager. This won't ever call notifyListeners(), but allows us to access it from anywhere
     webSocketManager.provider,
-    webSocketManager.webSocketStatus.provider,
+    webSocketManager.telemetryStatus.provider,
     ...webSocketManager.carModels.map((e) => e.provider),
   ];
 
   switch (userArgs['dashboard']) {
-    case '1':
+    case 'driver':
       runApp(MultiProvider(
         providers: providers,
         child: const BaseApp(dashboard: BasicDashboard()),
       ));
       break;
-    case '2':
+    case 'diagnostic':
       runApp(MultiProvider(
         providers: providers,
         child: const BaseApp(dashboard: BasicDashboard()),
       ));
       break;
-    case 'basic':
+    case 'dev':
     default:
       runApp(MultiProvider(
         providers: providers,

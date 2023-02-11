@@ -1,5 +1,5 @@
 import 'package:provider/provider.dart';
-import 'package:uksc_dashboard/models/generic.dart';
+import 'package:uksc_dashboard/models/base_model.dart';
 
 enum DriveMode { forward, reverse }
 
@@ -10,7 +10,8 @@ class CarStatus extends BaseModel {
           'drive_mode': 0,
           'regen_status': 0,
           'wheel_pedal': 0,
-          'throttle': 0.0,
+          'Vehicle.Chassis.Accelerator.PedalPosition': 0,
+          'Vehicle.Chassis.Brake.PedalPosition': 0,
         });
 
   bool get isArrayEnabled => data['array_status'] == 1;
@@ -21,7 +22,9 @@ class CarStatus extends BaseModel {
 
   bool get triggerControlEnabled => data['wheel_pedal'] == 0;
 
-  double get throttle => data['throttle'] * 100;
+  double get accelerator => data['Vehicle.Chassis.Accelerator.PedalPosition'];
+
+  double get brake => data['Vehicle.Chassis.Brake.PedalPosition'];
 
   @override
   ChangeNotifierProvider<CarStatus> get provider => ChangeNotifierProvider.value(value: this);

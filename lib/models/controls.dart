@@ -1,4 +1,4 @@
-import 'package:uksc_dashboard/models/generic.dart';
+import 'package:uksc_dashboard/models/base_model.dart';
 
 class Button {
   /// The name of this button.

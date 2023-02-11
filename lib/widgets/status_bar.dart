@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:uksc_dashboard/models/websocket_status.dart';
+import 'package:uksc_dashboard/models/telemetry_status.dart';
 
 /// The preferred height of the status bar
 const statusBarHeight = 35.0;
@@ -82,7 +82,7 @@ class ConnectionStatus extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<WebSocketStatus>(builder: (context, webSocketStatus, child) {
+    return Consumer<TelemetryStatus>(builder: (context, webSocketStatus, child) {
       Widget statusIcon;
       Widget statusText;
       switch (webSocketStatus.status) {

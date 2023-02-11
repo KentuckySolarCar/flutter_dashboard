@@ -6,11 +6,8 @@ enum Status { disconnected, connecting, connected }
 /// Number of latency measurements to average over
 const latencyAverageCount = 300;
 
-class WebSocketStatus extends ChangeNotifier {
+class TelemetryStatus extends ChangeNotifier {
   var _status = Status.disconnected;
-
-  // var _status = Status.connecting;
-  // var _status = Status.connected;
 
   var _numErrors = 0;
   final _recentLatencies = <int>[];
@@ -59,5 +56,5 @@ class WebSocketStatus extends ChangeNotifier {
     return '$statusString $errorString';
   }
 
-  ChangeNotifierProvider<WebSocketStatus> get provider => ChangeNotifierProvider.value(value: this);
+  ChangeNotifierProvider<TelemetryStatus> get provider => ChangeNotifierProvider.value(value: this);
 }
