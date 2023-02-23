@@ -195,10 +195,10 @@ class SetValueRequest extends Request {
     if (value is List) {
       requestJson[attribute] = [];
       for (var v in value) {
-        requestJson[attribute].add(v);
+        requestJson[attribute].add(v.toString());
       }
     } else {
-      requestJson[attribute] = value;
+      requestJson[attribute] = value.toString();
     }
     return requestJson;
   }
