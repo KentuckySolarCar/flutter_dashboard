@@ -14,6 +14,8 @@ import 'package:uksc_dashboard/models/speed.dart';
 import 'package:uksc_dashboard/models/base_model.dart';
 import 'package:uksc_dashboard/models/telemetry_status.dart';
 
+import 'package:uksc_dashboard/api/viss/viss.dart';
+
 class TelemetryManager extends ChangeNotifier {
   /// The address pointing to the websocket host
   Uri uri;
@@ -83,48 +85,48 @@ class TelemetryManager extends ChangeNotifier {
   }
 
   /// initialize websocket on uri
-  void _connect() {
-    telemetryStatus.status = Status.connecting;
-    // TODO do we need to handle errors or anything here?
-    _websocket = WebSocketChannel.connect(uri);
-    telemetryStatus.status = Status.connected;
-    // listen for messages, attempt to reconnect if connection is lost
-    _websocket.stream.listen((message) {
-      lastReceived = DateTime.now();
-      // check if message is json
-      try {
-        final data = json.decode(message);
-        // attempt to get timestamp in microseconds
-        if (data.containsKey('timestamp') && data['timestamp'] is int) {
-          final latency =
-              DateTime.now().difference(DateTime.fromMicrosecondsSinceEpoch(data['timestamp'])).inMicroseconds;
-          telemetryStatus.addLatency(latency);
-        } else {
-          print('No valid timestamp found in message: $message');
-          telemetryStatus.numErrors++;
-        }
-
-        // update models (indiscriminately, since it doesn't matter if no relevant keys for a model exist)
-        for (final model in carModels) {
-          model.updateFromJson(data);
-        }
-      } catch (e) {
-        // TODO need logging
-        print('Error decoding message $e');
-        print('Message: $message');
-        telemetryStatus.numErrors++;
-      }
-    }, onDone: () {
-      telemetryStatus.status = Status.disconnected;
-      // TODO need logging
-      print('Websocket connection closed (${_websocket.closeCode}, ${_websocket.closeReason})');
-      if (_websocket.closeCode != 1000) {
-        // TODO need logging
-        print('Attempting to reconnect');
-        _connect();
-      }
-    });
-  }
+  // void _connect() {
+  //   telemetryStatus.status = Status.connecting;
+  //   // TODO do we need to handle errors or anything here?
+  //   _websocket = WebSocketChannel.connect(uri);
+  //   telemetryStatus.status = Status.connected;
+  //   // listen for messages, attempt to reconnect if connection is lost
+  //   _websocket.stream.listen((message) {
+  //     lastReceived = DateTime.now();
+  //     // check if message is json
+  //     try {
+  //       final data = json.decode(message);
+  //       // attempt to get timestamp in microseconds
+  //       if (data.containsKey('timestamp') && data['timestamp'] is int) {
+  //         final latency =
+  //             DateTime.now().difference(DateTime.fromMicrosecondsSinceEpoch(data['timestamp'])).inMicroseconds;
+  //         telemetryStatus.addLatency(latency);
+  //       } else {
+  //         print('No valid timestamp found in message: $message');
+  //         telemetryStatus.numErrors++;
+  //       }
+  //
+  //       // update models (indiscriminately, since it doesn't matter if no relevant keys for a model exist)
+  //       for (final model in carModels) {
+  //         model.updateFromJson(data);
+  //       }
+  //     } catch (e) {
+  //       // TODO need logging
+  //       print('Error decoding message $e');
+  //       print('Message: $message');
+  //       telemetryStatus.numErrors++;
+  //     }
+  //   }, onDone: () {
+  //     telemetryStatus.status = Status.disconnected;
+  //     // TODO need logging
+  //     print('Websocket connection closed (${_websocket.closeCode}, ${_websocket.closeReason})');
+  //     if (_websocket.closeCode != 1000) {
+  //       // TODO need logging
+  //       print('Attempting to reconnect');
+  //       _connect();
+  //     }
+  //   });
+  // }
 
   /// send a message to the host
   void send(String message) {

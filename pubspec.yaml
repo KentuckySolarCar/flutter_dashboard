@@ -39,6 +39,7 @@ dependencies:
   web_socket_channel: ^2.2.0
   provider: ^6.0.3
   syncfusion_flutter_gauges: ^20.2.48
+  uuid: ^3.0.7
 
 dev_dependencies:
   flutter_test:
