@@ -5,8 +5,8 @@ import 'package:uuid/uuid.dart';
 
 import 'package:web_socket_channel/web_socket_channel.dart';
 
-import 'package:uksc_dashboard/api/viss/requests.dart';
-import 'package:uksc_dashboard/api/viss/response.dart';
+import 'package:uksc_dashboard/api/viss/models/request.dart';
+import 'package:uksc_dashboard/api/viss/models/response.dart';
 
 /// VISS (Vehicle Information Service Specification) websocket API version 2.0
 class VissApi {
@@ -38,7 +38,7 @@ class VissApi {
     // if we get here, we didn't receive a response
     throw Exception('No response received');
   }
-
+ 
   Future<Response> makeRequest(Request request) async {
     var response = _receiveResponse(request.requestId);
     _websocket.sink.add(jsonEncode(request.toJson()));
@@ -66,7 +66,7 @@ class VissApi {
   }
 
   /// Set value of a given path
-  Future<Response> setValue(SetRequest setRequest, {int timeout = 5}) async {
+  Future<Response> setValue(SetValueRequest setRequest, {int timeout = 5}) async {
     // TODO
   }
 

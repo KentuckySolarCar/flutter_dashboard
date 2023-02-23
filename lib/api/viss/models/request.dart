@@ -87,8 +87,9 @@
 // timestamp "ts" is in ISO8601 UTC format with trailing z.
 
 import 'package:uuid/uuid.dart';
+import 'package:uksc_dashboard/api/viss/models/filter.dart';
 
-enum Action {
+enum RequestAction {
   authorize,
   updateVSSTree,
   updateMetaData,
@@ -101,60 +102,155 @@ enum Action {
 
 /// Base class for all requests
 abstract class Request {
-  Action action;
+  RequestAction action;
   String requestId = const Uuid().v4();
   String ts = DateTime.now().toUtc().toIso8601String();
 
   Request(this.action);
 
-  Map<String, dynamic> toJson();
+  Map<String, dynamic> toJson() {
+    return {
+      "action": action.name,
+      "requestId": requestId,
+      "ts": ts,
+    };
+  }
+}
+
+class AuthorizeRequest extends Request {
+  String token;
+
+  AuthorizeRequest(this.token) : super(RequestAction.authorize);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return {
+      ...super.toJson(),
+      'token': token,
+    };
+  }
+}
+
+class UpdateVSSTreeRequest extends Request {
+  Map<String, dynamic> vssTree;
+
+  UpdateVSSTreeRequest(this.vssTree) : super(RequestAction.updateVSSTree);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return {
+      ...super.toJson(),
+      'metadata': vssTree,
+    };
+  }
+}
+
+class UpdateMetaDataRequest extends Request {
+  String path;
+  Map<String, dynamic> metadata;
+
+  UpdateMetaDataRequest(this.path, this.metadata)
+      : super(RequestAction.updateMetaData);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return {
+      ...super.toJson(),
+      'path': path,
+      'metadata': metadata,
+    };
+  }
+}
+
+class GetMetaDataRequest extends Request {
+  String path;
+
+  GetMetaDataRequest(this.path) : super(RequestAction.getMetaData);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return {
+      ...super.toJson(),
+      'path': path,
+    };
+  }
 }
 
 // reimplement the above using the base class
-class SetRequest extends Request {
+class SetValueRequest extends Request {
   String path;
   dynamic value;
   String attribute;
 
-  SetRequest(this.path, this.value, {this.attribute = 'value'})
-      : super(Action.set);
+  SetValueRequest(this.path, this.value, {this.attribute = 'value'})
+      : super(RequestAction.set);
 
   @override
   Map<String, dynamic> toJson() {
-    Map<String, dynamic> requestJson = {
-      "action": "set",
-      "path": path,
-      "attribute": attribute,
-      "requestId": requestId,
-      "ts": ts,
+    var requestJson = {
+      ...super.toJson(),
+      'path': path,
+      'attribute': attribute,
     };
     if (value is List) {
       requestJson[attribute] = [];
       for (var v in value) {
-        requestJson[attribute].add(v.toString());
+        requestJson[attribute].add(v);
       }
     } else {
-      requestJson[attribute] = value.toString();
+      requestJson[attribute] = value;
     }
     return requestJson;
   }
 }
 
 // reimplement the above using the base class
-class GetRequest extends Request {
+class GetValueRequest extends Request {
   String path;
   String attribute;
 
-  GetRequest(this.path, {this.attribute = 'value'}) : super(Action.get);
+  GetValueRequest(this.path, {this.attribute = 'value'})
+      : super(RequestAction.get);
 
   @override
   Map<String, dynamic> toJson() {
     return {
-      "action": "get",
-      "path": path,
-      "attribute": attribute,
-      "requestId": requestId,
-      "ts": ts,
+      ...super.toJson(),
+      'path': path,
+      'attribute': attribute,
+    };
+  }
+}
+
+class SubscribeRequest extends Request {
+  String path;
+  String attribute;
+  Filter? filter;
+
+  SubscribeRequest(this.path, {this.attribute = 'value', this.filter})
+      : super(RequestAction.subscribe);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return {
+      ...super.toJson(),
+      'path': path,
+      'attribute': attribute,
+      if (filter != null) 'filter': filter!.toJson(),
+    };
+  }
+}
+
+class UnsubscribeRequest extends Request {
+  String subscriptionId;
+
+  UnsubscribeRequest(this.subscriptionId) : super(RequestAction.unsubscribe);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return {
+      ...super.toJson(),
+      'subscriptionId': subscriptionId,
     };
   }
 }
