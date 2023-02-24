@@ -32,7 +32,7 @@ class VissApi {
       lastReceived = DateTime.now();
       var json = jsonDecode(message);
       if (json['requestId'] == requestId) {
-        return json;
+        return Response.fromJson(json);
       }
     }
     // if we get here, we didn't receive a response
@@ -47,43 +47,5 @@ class VissApi {
 
   void stop() {
     _websocket.sink.close();
-  }
-
-  /// Do authorization by passing a jwt token or a token file
-  void authorize(String token, {int timeout = 5}) async {
-    // TODO
-  }
-
-  /// Update VSS Tree Entry
-  void updateVSSTree(Map<String, dynamic> json, {int timeout = 5}) async {
-    // TODO
-  }
-
-  /// Update metadata for a given path
-  void updateMetaData(String path, Map<String, dynamic> json,
-      {int timeout = 5}) async {
-    // TODO
-  }
-
-  /// Set value of a given path
-  Future<Response> setValue(SetValueRequest setRequest, {int timeout = 5}) async {
-    // TODO
-  }
-
-  /// Get value from a given path
-  Future<Map<String, dynamic>> getValue(String path,
-      {String attribute = 'value', int timeout = 5}) async {
-    // TODO
-  }
-
-  /// Returns a subscription id
-  Future<String> subscribe(String path, Function(Map<String, dynamic>) callback,
-      {String attribute = 'value', int timeout = 5}) {
-    // TODO
-  }
-
-  /// Unsubscribe from value changes for a given path
-  Future<void> unsubscribe(String subscriptionId, {int timeout = 5}) async {
-    // TODO
   }
 }

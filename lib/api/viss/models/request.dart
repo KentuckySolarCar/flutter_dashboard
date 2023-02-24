@@ -89,7 +89,7 @@
 import 'package:uuid/uuid.dart';
 import 'package:uksc_dashboard/api/viss/models/filter.dart';
 
-enum RequestAction {
+enum Action {
   authorize,
   updateVSSTree,
   updateMetaData,
@@ -102,7 +102,7 @@ enum RequestAction {
 
 /// Base class for all requests
 abstract class Request {
-  RequestAction action;
+  Action action;
   String requestId = const Uuid().v4();
   String ts = DateTime.now().toUtc().toIso8601String();
 
@@ -120,7 +120,7 @@ abstract class Request {
 class AuthorizeRequest extends Request {
   String token;
 
-  AuthorizeRequest(this.token) : super(RequestAction.authorize);
+  AuthorizeRequest(this.token) : super(Action.authorize);
 
   @override
   Map<String, dynamic> toJson() {
@@ -134,7 +134,7 @@ class AuthorizeRequest extends Request {
 class UpdateVSSTreeRequest extends Request {
   Map<String, dynamic> vssTree;
 
-  UpdateVSSTreeRequest(this.vssTree) : super(RequestAction.updateVSSTree);
+  UpdateVSSTreeRequest(this.vssTree) : super(Action.updateVSSTree);
 
   @override
   Map<String, dynamic> toJson() {
@@ -150,7 +150,7 @@ class UpdateMetaDataRequest extends Request {
   Map<String, dynamic> metadata;
 
   UpdateMetaDataRequest(this.path, this.metadata)
-      : super(RequestAction.updateMetaData);
+      : super(Action.updateMetaData);
 
   @override
   Map<String, dynamic> toJson() {
@@ -165,7 +165,7 @@ class UpdateMetaDataRequest extends Request {
 class GetMetaDataRequest extends Request {
   String path;
 
-  GetMetaDataRequest(this.path) : super(RequestAction.getMetaData);
+  GetMetaDataRequest(this.path) : super(Action.getMetaData);
 
   @override
   Map<String, dynamic> toJson() {
@@ -183,7 +183,7 @@ class SetValueRequest extends Request {
   String attribute;
 
   SetValueRequest(this.path, this.value, {this.attribute = 'value'})
-      : super(RequestAction.set);
+      : super(Action.set);
 
   @override
   Map<String, dynamic> toJson() {
@@ -210,7 +210,7 @@ class GetValueRequest extends Request {
   String attribute;
 
   GetValueRequest(this.path, {this.attribute = 'value'})
-      : super(RequestAction.get);
+      : super(Action.get);
 
   @override
   Map<String, dynamic> toJson() {
@@ -228,7 +228,7 @@ class SubscribeRequest extends Request {
   Filter? filter;
 
   SubscribeRequest(this.path, {this.attribute = 'value', this.filter})
-      : super(RequestAction.subscribe);
+      : super(Action.subscribe);
 
   @override
   Map<String, dynamic> toJson() {
@@ -244,7 +244,7 @@ class SubscribeRequest extends Request {
 class UnsubscribeRequest extends Request {
   String subscriptionId;
 
-  UnsubscribeRequest(this.subscriptionId) : super(RequestAction.unsubscribe);
+  UnsubscribeRequest(this.subscriptionId) : super(Action.unsubscribe);
 
   @override
   Map<String, dynamic> toJson() {
