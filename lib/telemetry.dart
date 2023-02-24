@@ -15,6 +15,7 @@ import 'package:uksc_dashboard/models/base_model.dart';
 import 'package:uksc_dashboard/models/telemetry_status.dart';
 
 import 'package:uksc_dashboard/api/viss/viss.dart';
+import 'package:uksc_dashboard/api/viss/models/request.dart';
 
 class TelemetryManager extends ChangeNotifier {
   /// The address pointing to the websocket host
@@ -22,12 +23,14 @@ class TelemetryManager extends ChangeNotifier {
 
   /// The time a message was last received at
   var lastReceived = DateTime.now();
-  
+
   late WebSocketChannel _websocket;
+
+  late VissApi _vissApi;
 
   /// The status model
   final telemetryStatus = TelemetryStatus();
-  
+
   final List<BaseModel> carModels = [
     Speed(),
     LeftMotor(),
@@ -35,31 +38,18 @@ class TelemetryManager extends ChangeNotifier {
     CruiseControl(),
   ];
 
-
-  // Map<String, dynamic> newData
-  final Map<String, bool Function(Map<String, dynamic>)> subscriptions = HashMap();
-
-  String _subscribe(List<String> ids) {
-    // TODO
-    return 'abc123';
-  }
-
-  void _connect() {
+  void _subscribeModels() {
     for (final model in carModels) {
-      // TODO subscribe to all keys in model.data
-      // TODO add a callback to the subscription map
-      // ... blah blah blah
-      var subscriptionId = _subscribe(model.data.keys.toList());
-      subscriptions[subscriptionId] = (Map<String, dynamic> newData) {
-        return model.updateFromJson(newData);
-      };
+      var bestNode = VissApi.findBestSharedNode(model.data.keys.toList());
+
+      var subscriptionRequest = SubscribeRequest(bestNode);
+      _vissApi.subscribe(subscriptionRequest, (data) {
+        model.updateFromJson(data);
+      });
     }
-
   }
-
 
   TelemetryManager(this.uri, {testing = false}) {
-
     if (testing) {
       // for testing purposes:
       // async function timer thing to run speed.mph = 50 after 30 seconds
@@ -73,7 +63,9 @@ class TelemetryManager extends ChangeNotifier {
           final latency = Random().nextInt(2000000) + 1000000;
           telemetryStatus.addLatency(latency);
 
-          final newData = {'speed': (sin(timer.tick * 0.01) * 50).toDouble() + 50};
+          final newData = {
+            'speed': (sin(timer.tick * 0.01) * 50).toDouble() + 50
+          };
           for (final model in carModels) {
             model.updateFromJson(newData);
           }
@@ -81,6 +73,8 @@ class TelemetryManager extends ChangeNotifier {
       });
     } else {
       // _connect();
+      _vissApi = VissApi(uri);
+      _subscribeModels();
     }
   }
 
@@ -143,5 +137,6 @@ class TelemetryManager extends ChangeNotifier {
     _websocket.sink.close(1000, 'Done with websocket');
   }
 
-  ChangeNotifierProvider<TelemetryManager> get provider => ChangeNotifierProvider.value(value: this);
+  ChangeNotifierProvider<TelemetryManager> get provider =>
+      ChangeNotifierProvider.value(value: this);
 }
