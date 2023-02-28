@@ -28,6 +28,17 @@ class Data {
     }
     return Data(json['path'], dataPoints);
   }
+
+  // getter for the latest value, need to check timestamps of data points
+  String get latest {
+    var latest = dataPoints.first;
+    for (var dp in dataPoints) {
+      if (dp.timestamp.isAfter(latest.timestamp)) {
+        latest = dp;
+      }
+    }
+    return latest.value;
+  }
 }
 
 class Error {
@@ -74,7 +85,12 @@ class Response {
       } else {
         data.add(Data.fromJson(json['data']));
       }
-      return DataResponse(requestId, action, timestamp, data);
+      if (json.containsKey('subscriptionId')) {
+        return SubscriptionDataResponse(
+            requestId, action, timestamp, data, json['subscriptionId']);
+      } else {
+        return DataResponse(requestId, action, timestamp, data);
+      }
     } else if (json.containsKey('subscriptionId')) {
       return SubscriptionResponse(
           requestId, action, timestamp, json['subscriptionId']);
@@ -109,6 +125,21 @@ class DataResponse extends Response {
   @override
   String toString() {
     return 'DataResponse{data: $data}';
+  }
+}
+
+class SubscriptionDataResponse extends DataResponse {
+  String subscriptionId;
+
+  SubscriptionDataResponse(String requestId, Action action, DateTime timestamp,
+      List<Data> data, this.subscriptionId)
+      : super(requestId, action, timestamp, data);
+
+  // fromJson, use the super fromJson and then set the subscriptionId
+
+  @override
+  String toString() {
+    return 'SubscriptionDataResponse{subscriptionId: $subscriptionId}';
   }
 }
 
