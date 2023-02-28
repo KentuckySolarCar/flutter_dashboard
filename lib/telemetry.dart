@@ -43,8 +43,8 @@ class TelemetryManager extends ChangeNotifier {
       var bestNode = VissApi.findBestSharedNode(model.data.keys.toList());
 
       var subscriptionRequest = SubscribeRequest(bestNode);
-      _vissApi.subscribe(subscriptionRequest, (data) {
-        model.updateFromJson(data);
+      _vissApi.subscribe(subscriptionRequest, (subscriptionDataResponse) {
+        model.updateFromData(subscriptionDataResponse.data);
       });
     }
   }
