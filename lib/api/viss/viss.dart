@@ -18,30 +18,52 @@ class VissApi {
 
   late WebSocketChannel _websocket;
 
-  final StreamController receiveStream = StreamController.broadcast();
-
-  final Map<String, Function(Map<String, dynamic>)> _subscriptionCallbacks =
+  final Map<String, Function(SubscriptionDataResponse)> subscriptionCallbacks =
       HashMap();
 
-  VissApi(this.uri) {
-    // TODO this needs error handling (and probably shouldn't connect in constructor)
+  final Map<String, StreamController<Response>> _responseStreams = HashMap();
+
+  VissApi(this.uri);
+
+  void connect() {
     _websocket = WebSocketChannel.connect(uri);
-    receiveStream.addStream(_websocket.stream);
+    _websocket.stream.listen(_receiveListener);
+  }
+
+  void _receiveListener(dynamic message) {
+    var json = jsonDecode(message);
+    if (json['requestId'] != null) {
+      var response = Response.fromJson(json);
+
+      if (response is SubscriptionDataResponse) {
+        if (subscriptionCallbacks.containsKey(response.subscriptionId)) {
+          subscriptionCallbacks[response.subscriptionId]!(response);
+        }
+      } else {
+        if (_responseStreams.containsKey(response.requestId)) {
+          _responseStreams[response.requestId]!.add(response);
+          // close stream
+          _responseStreams[response.requestId]!.close();
+        }
+      }
+    } else {
+      // TODO handle this
+    }
   }
 
   // this is a very lazy way of implementing this, every listener will have
   // to decode the JSON of every message. Can be improved if needed later.
   Future<Response> _receiveResponse(String requestId) async {
-    // wait for a websocket message that contains a "requestId" in JSON that matches the one we sent, then return that
-    await for (var message in _websocket.stream) {
-      lastReceived = DateTime.now();
-      var json = jsonDecode(message);
-      if (json['requestId'] == requestId) {
-        return Response.fromJson(json);
-      }
+    if (_responseStreams.containsKey(requestId)) {
+      // this is an error, but luckily should never happen
+      throw Exception('Request ID already exists');
     }
-    // if we get here, we didn't receive a response
-    throw Exception('No response received');
+
+    // init new stream we will listen to after it is inserted into the map
+    StreamController<Response> responseStreamController = StreamController();
+
+    // await response from stream, then return
+    return responseStreamController.stream.first;
   }
 
   Future<Response> makeRequest(Request request) {
@@ -57,17 +79,12 @@ class VissApi {
     _websocket.sink.close();
   }
 
-  // TODO
-  // - listener that just calls callbacks for subscriptionIds
-  // - thing that finds lowest shared VSS node
-  // subscribe convenience method
-
-  Future<Response> subscribe(
-      SubscribeRequest request, Function(Map<String, dynamic>) callback) async {
+  Future<Response> subscribe(SubscribeRequest request,
+      Function(SubscriptionDataResponse) callback) async {
     Response response = await makeRequest(request);
     // check if subscriptionResponse
     if (response is SubscriptionResponse) {
-      _subscriptionCallbacks[response.subscriptionId] = callback;
+      subscriptionCallbacks[response.subscriptionId] = callback;
     }
     return response;
   }
@@ -76,7 +93,7 @@ class VissApi {
     Response response = await makeRequest(request);
     // check if not ErrorResponse
     if (response is! ErrorResponse) {
-      _subscriptionCallbacks.remove(request.subscriptionId);
+      subscriptionCallbacks.remove(request.subscriptionId);
     }
     return response;
   }
