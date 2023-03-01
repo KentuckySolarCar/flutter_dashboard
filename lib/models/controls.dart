@@ -32,10 +32,10 @@ class SteeringWheel extends BaseModel {
 
   // map each buttonName to button_name_short and button_name_long for super call
   SteeringWheel()
-      : super({for (var name in _buttonNames) 'button_${name}_short': 0}
-          ..addAll({for (var name in _buttonNames) 'button_${name}_long': 0})) {
+      : super({for (var name in _buttonNames) 'button_${name}_short': 0.toString()}
+          ..addAll({for (var name in _buttonNames) 'button_${name}_long': 0.toString()})) {
     for (var name in _buttonNames) {
-      _buttons[name] = Button(name, data['button_${name}_long'], data['button_${name}_short']);
+      _buttons[name] = Button(name, int.parse(data['button_${name}_long']!), int.parse(data['button_${name}_short']!));
     }
   }
 

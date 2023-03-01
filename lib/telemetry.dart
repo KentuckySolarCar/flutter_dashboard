@@ -40,7 +40,7 @@ class TelemetryManager extends ChangeNotifier {
 
   void _subscribeModels() {
     for (final model in carModels) {
-      var bestNode = VissApi.findBestSharedNode(model.data.keys.toList());
+      var bestNode = VissApi.findBestSharedNode(model.nodes);
 
       var subscriptionRequest = SubscribeRequest(bestNode);
       _vissApi.subscribe(subscriptionRequest, (subscriptionDataResponse) {

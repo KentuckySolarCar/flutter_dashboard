@@ -5,14 +5,14 @@ class _Motor extends BaseModel {
   // keys should match what we expect to have to parse
   _Motor(String instance)
       : super({
-          'Vehicle.PowerTrain.ElectricMotor.$instance.MaxPower': 0,
-          'Vehicle.PowerTrain.ElectricMotor.$instance.MaxTorque': 0,
-          'Vehicle.PowerTrain.ElectricMotor.$instance.MaxRegenPower': 0,
-          'Vehicle.PowerTrain.ElectricMotor.$instance.MaxRegenTorque': 0,
-          'Vehicle.PowerTrain.ElectricMotor.$instance.Speed': 0,
-          'Vehicle.PowerTrain.ElectricMotor.$instance.Temperature': 0,
-          'Vehicle.PowerTrain.ElectricMotor.$instance.Power': 0,
-          'Vehicle.PowerTrain.ElectricMotor.$instance.Torque': 0,
+          'Vehicle.PowerTrain.ElectricMotor.$instance.MaxPower': '0',
+          'Vehicle.PowerTrain.ElectricMotor.$instance.MaxTorque': '0',
+          'Vehicle.PowerTrain.ElectricMotor.$instance.MaxRegenPower': '0',
+          'Vehicle.PowerTrain.ElectricMotor.$instance.MaxRegenTorque': '0',
+          'Vehicle.PowerTrain.ElectricMotor.$instance.Speed': '0',
+          'Vehicle.PowerTrain.ElectricMotor.$instance.Temperature': '0',
+          'Vehicle.PowerTrain.ElectricMotor.$instance.Power': '0',
+          'Vehicle.PowerTrain.ElectricMotor.$instance.Torque': '0',
         });
 
 

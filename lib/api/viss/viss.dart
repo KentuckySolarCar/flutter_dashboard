@@ -14,7 +14,7 @@ class VissApi {
   Uri uri;
 
   /// The time a message was last received at
-  var lastReceived = DateTime.now();
+  DateTime lastReceived = DateTime.now();
 
   late WebSocketChannel _websocket;
 
@@ -25,14 +25,17 @@ class VissApi {
 
   VissApi(this.uri);
 
+  /// Connect to the VISS websocket server and start listening for messages.
   void connect() {
     _websocket = WebSocketChannel.connect(uri);
     _websocket.stream.listen(_receiveListener);
   }
 
+  /// The listener for the websocket stream.
   void _receiveListener(dynamic message) {
     var json = jsonDecode(message);
     if (json['requestId'] != null) {
+      lastReceived = DateTime.now();
       var response = Response.fromJson(json);
 
       if (response is SubscriptionDataResponse) {
@@ -47,12 +50,13 @@ class VissApi {
         }
       }
     } else {
-      // TODO handle this
+      // TODO log something (maybe throw an exception?). All responses should have a requestId
     }
   }
 
-  // this is a very lazy way of implementing this, every listener will have
-  // to decode the JSON of every message. Can be improved if needed later.
+  /// Wait for a response from the VISS websocket server.
+  ///
+  /// Used internally by [makeRequest] and [subscribe].
   Future<Response> _receiveResponse(String requestId) async {
     if (_responseStreams.containsKey(requestId)) {
       // this is an error, but luckily should never happen
@@ -66,11 +70,12 @@ class VissApi {
     return responseStreamController.stream.first;
   }
 
+  /// Perform a request.
   Future<Response> makeRequest(Request request) {
     var response = _receiveResponse(request.requestId);
     _websocket.sink.add(jsonEncode(request.toJson()));
     if (request is SubscribeRequest || request is UnsubscribeRequest) {
-      // TODO handle this appropriately
+      // TODO log warning, should use subscribe() or unsubscribe() instead to ensure subscription callbacks are handled
     }
     return response;
   }
@@ -79,9 +84,13 @@ class VissApi {
     _websocket.sink.close();
   }
 
+  /// Perform a subscription request.
+  ///
+  /// Returns a [SubscriptionResponse] if successful, or an [ErrorResponse] if not.
   Future<Response> subscribe(SubscribeRequest request,
       Function(SubscriptionDataResponse) callback) async {
     Response response = await makeRequest(request);
+    assert(response is ErrorResponse || response is SubscriptionResponse);
     // check if subscriptionResponse
     if (response is SubscriptionResponse) {
       subscriptionCallbacks[response.subscriptionId] = callback;
@@ -89,8 +98,13 @@ class VissApi {
     return response;
   }
 
+  /// Perform an unsubscription request.
+  ///
+  /// Returns a [SubscriptionResponse] if successful, or an [ErrorResponse] if not.
   Future<Response> unsubscribe(UnsubscribeRequest request) async {
     Response response = await makeRequest(request);
+    assert(response is ErrorResponse || response is SubscriptionResponse);
+
     // check if not ErrorResponse
     if (response is! ErrorResponse) {
       subscriptionCallbacks.remove(request.subscriptionId);
@@ -98,16 +112,17 @@ class VissApi {
     return response;
   }
 
-  // util method to find the lowest shared VSS node from a list of VSS paths
-  static String findBestSharedNode(List<String> paths) {
-    // where paths might be something like:
-    // [
-    //   'Vehicle.Drivetrain.FuelSystem.Level',
-    //   'Vehicle.Drivetrain.FuelSystem.Tank',
-    //   'Vehicle.Drivetrain.FuelSystem.Tank.Capacity',
-    // ]
-    // we want to return 'Vehicle.Drivetrain.FuelSystem'
-
+  /// Find the best shared VSS node from a list of VSS [paths].
+  ///
+  /// For example, given the following paths:
+  /// ```
+  ///  Vehicle.Drivetrain.FuelSystem.Level,
+  ///  Vehicle.Drivetrain.FuelSystem.Tank,
+  ///  Vehicle.Drivetrain.FuelSystem.Tank.Capacity
+  /// ```
+  ///
+  /// The best shared node is `Vehicle.Drivetrain.FuelSystem`.
+  static String findBestSharedNode(Iterable<String> paths) {
     // create a map of nodes and ints
     Map<String, int> nodeFrequency = HashMap();
     for (var path in paths) {
