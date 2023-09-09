@@ -33,9 +33,9 @@ class TelemetryManager extends ChangeNotifier {
 
   final List<BaseModel> carModels = [
     Speed(),
-    LeftMotor(),
-    RightMotor(),
-    CruiseControl(),
+    // LeftMotor(),
+    // RightMotor(),
+    // CruiseControl(),
   ];
 
   void _subscribeModels() {

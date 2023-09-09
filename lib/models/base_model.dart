@@ -6,7 +6,7 @@ import 'package:uksc_dashboard/api/viss/models/response.dart';
 class BaseModel extends ChangeNotifier {
   /// key value data pairs, keys should match what we expect to have to parse
   @protected
-  final Map<String, String> data;
+  final Map<String, dynamic> data;
 
   BaseModel(this.data);
 

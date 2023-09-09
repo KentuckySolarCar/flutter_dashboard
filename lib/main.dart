@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:args/args.dart';
 import 'package:provider/provider.dart';
+import 'package:desktop_window/desktop_window.dart';
 
 import 'package:uksc_dashboard/telemetry.dart';
 import 'package:uksc_dashboard/dashboards/basic.dart';
@@ -57,6 +58,7 @@ void main(List<String> args) {
         child: const BaseApp(dashboard: BasicDashboard()),
       ));
   }
+  DesktopWindow.setFullScreen(true);
 }
 
 class BaseApp extends StatelessWidget {
