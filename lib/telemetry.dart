@@ -74,7 +74,9 @@ class TelemetryManager extends ChangeNotifier {
       });
     } else {
       // _connect();
+      print('Connecting to VISS API $uri');
       _vissApi = VissApi(uri);
+      _vissApi.connect();
       _subscribeModels();
     }
   }
