@@ -6,7 +6,7 @@ import 'package:uksc_dashboard/api/viss/models/response.dart';
 class BaseModel extends ChangeNotifier {
   /// key value data pairs, keys should match what we expect to have to parse
   @protected
-  final Map<String, dynamic> data;
+  final Map<String, String> data;
 
   BaseModel(this.data);
 
@@ -17,7 +17,7 @@ class BaseModel extends ChangeNotifier {
   ///
   /// Notifies listener if data is changed. Must be able to handle keys not
   /// being present. Returns `true` if the data was updated, `false` otherwise.
-  bool updateFromJson(Map<String, dynamic> newData) {
+  bool updateFromJson(Map<String, String> newData) {
     var updated = false;
     newData.forEach((key, value) {
       if (data.containsKey(key)) {

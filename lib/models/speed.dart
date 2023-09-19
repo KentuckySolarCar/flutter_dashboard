@@ -2,10 +2,10 @@ import 'package:provider/provider.dart';
 import 'package:uksc_dashboard/models/base_model.dart';
 
 class Speed extends BaseModel {
-  Speed() : super({'speed': 0.0});
+  Speed() : super({'Vehicle.Speed': '0.0'});
 
   /// The speed of the car in mph.
-  double get mph => data['speed']!;
+  double get mph => double.parse(data['Vehicle.Speed']!);
 
   /// The speed of the car in km/h.
   // double get kmh => data['speed']! * 1.60934;
@@ -14,5 +14,6 @@ class Speed extends BaseModel {
   // double get ms => data['speed']! * 0.44704;
 
   @override
-  ChangeNotifierProvider<Speed> get provider => ChangeNotifierProvider.value(value: this);
+  ChangeNotifierProvider<Speed> get provider =>
+      ChangeNotifierProvider.value(value: this);
 }

@@ -64,7 +64,8 @@ class TelemetryManager extends ChangeNotifier {
           telemetryStatus.addLatency(latency);
 
           final newData = {
-            'speed': (sin(timer.tick * 0.01) * 50).toDouble() + 50
+            'Vehicle.Speed':
+                ((sin(timer.tick * 0.01) * 50).toDouble() + 50).toString()
           };
           for (final model in carModels) {
             model.updateFromJson(newData);

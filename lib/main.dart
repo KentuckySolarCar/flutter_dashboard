@@ -6,7 +6,7 @@ import 'package:desktop_window/desktop_window.dart';
 import 'package:uksc_dashboard/telemetry.dart';
 import 'package:uksc_dashboard/dashboards/basic.dart';
 
-const defaultPort = 1337;
+const defaultPort = 8090;
 const defaultHost = '127.0.0.1';
 const defaultDashboard = 'basic';
 
@@ -29,7 +29,7 @@ void main(List<String> args) {
           scheme: 'wss',
           host: userArgs['host'],
           port: int.tryParse(userArgs['port']) ?? defaultPort),
-      testing: true);
+      testing: false);
 
   final providers = [
     // expose the websocket manager. This won't ever call notifyListeners(), but allows us to access it from anywhere
