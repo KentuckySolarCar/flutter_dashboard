@@ -49,7 +49,7 @@ class Error {
   Error(this.number, this.reason, this.message);
 
   static Error fromJson(Map<String, dynamic> json) {
-    return Error(json['number'], json['reason'], json['message']);
+    return Error(int.parse(json['number']), json['reason'], json['message']);
   }
 
   @override

@@ -26,7 +26,7 @@ void main(List<String> args) {
 
   final webSocketManager = TelemetryManager(
       Uri(
-          scheme: 'wss',
+          scheme: 'ws',
           host: userArgs['host'],
           port: int.tryParse(userArgs['port']) ?? defaultPort),
       testing: false);
