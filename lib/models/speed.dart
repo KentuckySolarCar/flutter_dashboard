@@ -5,7 +5,7 @@ class Speed extends BaseModel {
   Speed() : super({'Vehicle.Speed': 0.0});
 
   /// The speed of the car in mph.
-  double get mph => data['Vehicle.Speed']!;
+  double get mph => data['Vehicle.Speed'];
 
   /// The speed of the car in km/h.
   // double get kmh => data['speed']! * 1.60934;
