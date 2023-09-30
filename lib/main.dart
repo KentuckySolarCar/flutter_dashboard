@@ -1,16 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:args/args.dart';
 import 'package:provider/provider.dart';
-import 'package:desktop_window/desktop_window.dart';
+import 'package:logging/logging.dart';
 
 import 'package:uksc_dashboard/telemetry.dart';
 import 'package:uksc_dashboard/dashboards/basic.dart';
+
+final log = Logger('main');
 
 const defaultPort = 8090;
 const defaultHost = '127.0.0.1';
 const defaultDashboard = 'basic';
 
 void main(List<String> args) {
+  Logger.root.onRecord.listen((record) {
+    debugPrint('${record.level.name}: ${record.time}: ${record.message}');
+  });
+
   // argument setup
   final parser = ArgParser();
   parser.addOption('dashboard',
@@ -22,7 +28,12 @@ void main(List<String> args) {
       abbr: 'h', help: 'Webserver IP address', defaultsTo: defaultHost);
   parser.addOption('port',
       abbr: 'p', help: 'Webserver port', defaultsTo: defaultPort.toString());
+  parser.addFlag('verbose', defaultsTo: false);
   final userArgs = parser.parse(args);
+
+  Logger.root.level = userArgs['verbose'] ? Level.ALL : Level.INFO;
+  log.config('Logging level set to ${Logger.root.level}');
+  log.finer('Parsed arguments: $userArgs');
 
   final webSocketManager = TelemetryManager(
       Uri(
@@ -38,6 +49,7 @@ void main(List<String> args) {
     ...webSocketManager.carModels.map((e) => e.provider),
   ];
 
+  log.info('loading dashboard ${userArgs['dashboard']}');
   switch (userArgs['dashboard']) {
     case 'driver':
       runApp(MultiProvider(
@@ -58,7 +70,6 @@ void main(List<String> args) {
         child: const BaseApp(dashboard: BasicDashboard()),
       ));
   }
-  // DesktopWindow.setFullScreen(true);
 }
 
 class BaseApp extends StatelessWidget {

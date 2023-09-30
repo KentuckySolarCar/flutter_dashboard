@@ -36,7 +36,7 @@ dependencies:
   provider: ^6.0.3
   syncfusion_flutter_gauges: ^20.2.48
   uuid: ^4.0.0
-  desktop_window: ^0.4.0
+  logging: ^1.1.0
 
 dev_dependencies:
   flutter_test:
