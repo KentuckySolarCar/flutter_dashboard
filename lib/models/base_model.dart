@@ -6,7 +6,7 @@ import 'package:uksc_dashboard/api/viss/models/response.dart';
 class BaseModel extends ChangeNotifier {
   /// key value data pairs, keys should match what we expect to have to parse
   @protected
-  final Map<String, String> data;
+  final Map<String, dynamic> data;
 
   BaseModel(this.data);
 
@@ -42,9 +42,15 @@ class BaseModel extends ChangeNotifier {
     var updated = false;
     for (final newDatum in newData) {
       if (data.containsKey(newDatum.path)) {
-        if (data[newDatum.path] != newDatum.latest) {
-          data[newDatum.path] = newDatum.latest;
-          updated = true;
+        // TODO check for type mismatch, log error
+        if (data[newDatum.path].runtimeType == newDatum.latest.runtimeType) {
+          if (data[newDatum.path] != newDatum.latest) {
+            data[newDatum.path] = newDatum.latest;
+            updated = true;
+          }
+        } else {
+          print(
+              'Type mismatch for ${newDatum.path}: ${data[newDatum.path].runtimeType} != ${newDatum.latest.runtimeType}');
         }
       }
     }

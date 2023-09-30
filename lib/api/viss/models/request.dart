@@ -97,7 +97,10 @@ enum Action {
   set,
   get,
   subscribe,
-  unsubscribe
+  unsubscribe,
+  //unsubscribeAll, // TODO
+  subscription,
+  unknown
 }
 
 /// Base class for all requests
@@ -126,7 +129,7 @@ class AuthorizeRequest extends Request {
   Map<String, dynamic> toJson() {
     return {
       ...super.toJson(),
-      'token': token,
+      'tokens': token,
     };
   }
 }

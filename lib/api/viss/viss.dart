@@ -33,13 +33,17 @@ class VissApi {
 
   /// The listener for the websocket stream.
   void _receiveListener(dynamic message) {
-    var json = jsonDecode(message);
-    if (json['requestId'] != null) {
+    print('Received message: $message');
+    Map<String, dynamic> json = jsonDecode(message);
+    print('Decoded message: $json');
+    if (json.containsKey('requestId') || json.containsKey('subscriptionId')) {
       lastReceived = DateTime.now();
       var response = Response.fromJson(json);
 
       if (response is SubscriptionDataResponse) {
+        print('Received subscription data for ${response.subscriptionId}');
         if (subscriptionCallbacks.containsKey(response.subscriptionId)) {
+          print('Calling subscription callback for ${response.subscriptionId}');
           subscriptionCallbacks[response.subscriptionId]!(response);
         }
       } else {
@@ -51,6 +55,7 @@ class VissApi {
       }
     } else {
       // TODO log something (maybe throw an exception?). All responses should have a requestId
+      print('Received message without requestId or subscriptionId: $message');
     }
   }
 
@@ -63,19 +68,25 @@ class VissApi {
       throw Exception('Request ID already exists');
     }
 
+    print('init new stream');
     // init new stream we will listen to after it is inserted into the map
     StreamController<Response> responseStreamController = StreamController();
+    _responseStreams[requestId] = responseStreamController;
 
+    print('awaiting response');
     // await response from stream, then return
     return responseStreamController.stream.first;
   }
 
   /// Perform a request.
   Future<Response> makeRequest(Request request) {
+    print('Making request: ${request.toJson()}');
     var response = _receiveResponse(request.requestId);
     _websocket.sink.add(jsonEncode(request.toJson()));
     if (request is SubscribeRequest || request is UnsubscribeRequest) {
       // TODO log warning, should use subscribe() or unsubscribe() instead to ensure subscription callbacks are handled
+      print(
+          'Warning: subscribe/unsubscribe request made without using subscribe/unsubscribe methods');
     }
     return response;
   }
@@ -89,10 +100,13 @@ class VissApi {
   /// Returns a [SubscriptionResponse] if successful, or an [ErrorResponse] if not.
   Future<Response> subscribe(SubscribeRequest request,
       Function(SubscriptionDataResponse) callback) async {
+    print('Making subscription request');
     Response response = await makeRequest(request);
     assert(response is ErrorResponse || response is SubscriptionResponse);
     // check if subscriptionResponse
+    print('Adding subscription callback for ${response}');
     if (response is SubscriptionResponse) {
+      print('Adding subscription callback for ${response.subscriptionId}');
       subscriptionCallbacks[response.subscriptionId] = callback;
     }
     return response;

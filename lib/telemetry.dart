@@ -1,6 +1,7 @@
 import 'dart:collection';
 import 'dart:convert';
 import 'dart:async';
+import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/foundation.dart';
@@ -44,6 +45,8 @@ class TelemetryManager extends ChangeNotifier {
 
       var subscriptionRequest = SubscribeRequest(bestNode);
       _vissApi.subscribe(subscriptionRequest, (subscriptionDataResponse) {
+        print(
+            'Received subscription data for ${subscriptionDataResponse.subscriptionId}');
         model.updateFromData(subscriptionDataResponse.data);
       });
     }
@@ -78,7 +81,7 @@ class TelemetryManager extends ChangeNotifier {
       _vissApi = VissApi(uri);
       _vissApi.connect();
       var authorizeRequest = AuthorizeRequest(
-          'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJsb2NhbCBkZXYiLCJpc3MiOiJjcmVhdGVUb2tlbi5weSIsImF1ZCI6WyJrdWtzYS52YWwiXSwiaWF0IjoxNTE2MjM5MDIyLCJleHAiOjE3NjcyMjU1OTksInNjb3BlIjoicHJvdmlkZTpWZWhpY2xlLlNwZWVkIn0.WlHkTSverOeprozFHG5Oo14c_Qr0NL9jv3ObAK4S10ddbqFRjWttkY9C0ehLqM6vXNUyI9uimbrM5FSPpw058mWGbOaEc8l1ImjS-DBKkDXyFkSlMoCPuWfhbamfFWTfY-K_K21kTs0hvr-FGRREC1znnZx0TFEi9HQO2YJvsSfJ7-6yo1Wfplvhf3NCa-sC5PrZEEbvYLkTB56C--0waqxkLZGx_SAo_XoRCijJ3s_LnrEbp61kT9CVYmNk017--mA9EEcjpHceOOtj1_UVjHpLKHOxitjpF-7LQNdq2kCY-Y2qv9vf8H6nAFVG8QKAUAaFb0CmYpDIdK8XSLRD7yLd6JnoRswBqmveFCUpmdrMYsSgut1JH4oCn5EnJ-c5UfZ4IRDgc7iBE5cqH9ao7j5PItsE9tYQJDAfygel3sYnIzuAd-DMYyPs1Jj9BzrAWEmI9s0PelA0KAEspmNufn9e-mjeC050e5NhhzJ4Vj_ffbOBzgx1vgLAaoMj5dOb4j3OpNC0XoUgGfR-YbTLi48h6uXEnxsXNGblOlSqTBmy2iZhYpfLBIsdvQTzKf2iYkw_TLo5LE5p9m4aUKFywcyGPMxzVcA8JIJ2g2Xp30RnIAxUlDTXcuYDGYRgKiGJb0rq1yQVl3RCnKaxTVHg8qqHkts_B-cbItlZP8bJA5M');
+          'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJrdWtzYS52YWwiLCJpc3MiOiJFY2xpcHNlIEtVS1NBIERldiIsImFkbWluIjp0cnVlLCJpYXQiOjE1MTYyMzkwMjIsImV4cCI6MTc2NzIyNTU5OSwia3Vrc2EtdnNzIjp7IioiOiJydyJ9fQ.QQcVR0RuRJIoasPXYsMGZhdvhLjUalk4GcRaxhh3-0_j3CtVSZ0lTbv_Z3As5BfIYzaMlwUzFGvCVOq2MXVjRK81XOAZ6wIsyKOxva16zjbZryr2V_m3yZ4twI3CPEzJch11_qnhInirHltej-tGg6ySfLaTYeAkw4xYGwENMBBhN5t9odANpScZP_xx5bNfwdW1so6FkV1WhpKlCywoxk_vYZxo187d89bbiu-xOZUa5D-ycFkd1-1rjPXLGE_g5bc4jcQBvNBc-5FDbvt4aJlTQqjpdeppxhxn_gjkPGIAacYDI7szOLC-WYajTStbksUju1iQCyli11kPx0E66me_ZVwOX07f1lRF6D2brWm1LcMAHM3bQUK0LuyVwWPxld64uSAEsvSKsRyJERc7nZUgLf7COnUrrkxgIUNjukbdT2JVN_I-3l3b4YXg6JVD7Y5g0QYBKgXEFpZrDbBVhzo7PXPAhJD6-c3DcUQyRZExbrnFV56RwWuExphw8lYnbMvxPWImiVmB9nRVgFKD0TYaw1sidPSSlZt8Uw34VZzHWIZQAQY0BMjR33fefg42XQ1YzIwPmDx4GYXLl7HNIIVbsRsibKaJnf49mz2qnLC1K272zXSPljO11Ke1MNnsnKyUH7mcwEs9nhTsnMgEOx_TyMLRYo-VEHBDLuEOiBo');
       _vissApi.makeRequest(authorizeRequest).then((value) => {
             print('Authorized'),
             _subscribeModels(),

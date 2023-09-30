@@ -58,7 +58,7 @@ void main(List<String> args) {
         child: const BaseApp(dashboard: BasicDashboard()),
       ));
   }
-  DesktopWindow.setFullScreen(true);
+  // DesktopWindow.setFullScreen(true);
 }
 
 class BaseApp extends StatelessWidget {

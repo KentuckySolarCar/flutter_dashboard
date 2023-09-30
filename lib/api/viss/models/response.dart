@@ -2,7 +2,7 @@ import 'package:uksc_dashboard/api/viss/models/request.dart';
 
 class DataPoint {
   DateTime timestamp;
-  String value;
+  dynamic value;
 
   DataPoint(this.timestamp, this.value);
 
@@ -30,7 +30,7 @@ class Data {
   }
 
   // getter for the latest value, need to check timestamps of data points
-  String get latest {
+  dynamic get latest {
     var latest = dataPoints.first;
     for (var dp in dataPoints) {
       if (dp.timestamp.isAfter(latest.timestamp)) {
@@ -59,23 +59,28 @@ class Error {
 }
 
 class Response {
-  String requestId;
+  String? requestId;
   Action action;
   DateTime timestamp;
 
   Response(this.requestId, this.action, this.timestamp);
 
   static Response fromJson(Map<String, dynamic> json) {
-    var action = Action.values.firstWhere((e) => e.name == json['action']);
-    var requestId = json['requestId'];
+    var action = json['action'] != null
+        ? Action.values.firstWhere((e) => e.name == json['action'])
+        : Action.unknown;
+
     // json may not have 'ts'
     var timestamp = json['ts'] != null
         ? DateTime.parse(json['ts'])
         : DateTime.now().toUtc();
 
+    // json may not have 'requestId'
+    String? requestId = json['requestId'];
+
     if (json.containsKey('error')) {
       return ErrorResponse(
-          requestId, action, timestamp, Error.fromJson(json['error']));
+          requestId!, action, timestamp, Error.fromJson(json['error']));
     } else if (json.containsKey('data')) {
       var data = <Data>[];
       if (json['data'] is List) {
@@ -87,13 +92,13 @@ class Response {
       }
       if (json.containsKey('subscriptionId')) {
         return SubscriptionDataResponse(
-            requestId, action, timestamp, data, json['subscriptionId']);
+            action, timestamp, data, json['subscriptionId']);
       } else {
-        return DataResponse(requestId, action, timestamp, data);
+        return DataResponse(requestId!, action, timestamp, data);
       }
     } else if (json.containsKey('subscriptionId')) {
       return SubscriptionResponse(
-          requestId, action, timestamp, json['subscriptionId']);
+          requestId!, action, timestamp, json['subscriptionId']);
     } else {
       return Response(requestId, action, timestamp);
     }
@@ -117,7 +122,7 @@ class ErrorResponse extends Response {
 class DataResponse extends Response {
   List<Data> data;
 
-  DataResponse(String requestId, Action action, DateTime timestamp, this.data)
+  DataResponse(String? requestId, Action action, DateTime timestamp, this.data)
       : super(requestId, action, timestamp);
 
   // fromJson, use the super fromJson and then set the data
@@ -131,9 +136,9 @@ class DataResponse extends Response {
 class SubscriptionDataResponse extends DataResponse {
   String subscriptionId;
 
-  SubscriptionDataResponse(String requestId, Action action, DateTime timestamp,
-      List<Data> data, this.subscriptionId)
-      : super(requestId, action, timestamp, data);
+  SubscriptionDataResponse(
+      Action action, DateTime timestamp, List<Data> data, this.subscriptionId)
+      : super(null, action, timestamp, data);
 
   // fromJson, use the super fromJson and then set the subscriptionId
 
