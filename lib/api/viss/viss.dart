@@ -1,14 +1,13 @@
 import 'dart:collection';
 import 'dart:convert';
 import 'dart:async';
-import 'package:uuid/uuid.dart';
 
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 import 'package:uksc_dashboard/api/viss/models/request.dart';
 import 'package:uksc_dashboard/api/viss/models/response.dart';
 
-/// VISS (Vehicle Information Service Specification) websocket API version 2.0
+/// VISS (Vehicle Information Service Specification) websocket API version 1.0
 class VissApi {
   /// The address pointing to the websocket host
   Uri uri;
@@ -23,12 +22,24 @@ class VissApi {
 
   final Map<String, StreamController<Response>> _responseStreams = HashMap();
 
-  VissApi(this.uri);
+  final Function(Response)? onResponse;
+  final Function(Request)? onRequest;
+  final Function(Object)? onError;
+  final Function()? onDisconnect;
+
+  VissApi(this.uri,
+      {this.onRequest, this.onResponse, this.onError, this.onDisconnect});
 
   /// Connect to the VISS websocket server and start listening for messages.
   void connect() {
     _websocket = WebSocketChannel.connect(uri);
-    _websocket.stream.listen(_receiveListener);
+    _websocket.stream.listen(_receiveListener, onError: (error, stackTrace) {
+      print('Error: $error Stacktrace: $stackTrace');
+      onError?.call(error);
+    }, onDone: () {
+      print('Done');
+      onDisconnect?.call();
+    });
   }
 
   /// The listener for the websocket stream.
@@ -79,8 +90,9 @@ class VissApi {
   }
 
   /// Perform a request.
-  Future<Response> makeRequest(Request request) {
+  Future<Response> makeRequest(Request request) async {
     print('Making request: ${request.toJson()}');
+    onRequest?.call(request);
     var response = _receiveResponse(request.requestId);
     _websocket.sink.add(jsonEncode(request.toJson()));
     if (request is SubscribeRequest || request is UnsubscribeRequest) {
@@ -88,6 +100,7 @@ class VissApi {
       print(
           'Warning: subscribe/unsubscribe request made without using subscribe/unsubscribe methods');
     }
+    onResponse?.call(await response);
     return response;
   }
 
