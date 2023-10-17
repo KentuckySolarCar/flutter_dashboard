@@ -61,7 +61,8 @@ class Error {
 class Response {
   String? requestId;
   Action action;
-  DateTime timestamp;
+  DateTime? timestamp;
+  DateTime processedTimestamp = DateTime.now().toUtc();
 
   Response(this.requestId, this.action, this.timestamp);
 
@@ -70,10 +71,7 @@ class Response {
         ? Action.values.firstWhere((e) => e.name == json['action'])
         : Action.unknown;
 
-    // json may not have 'ts'
-    var timestamp = json['ts'] != null
-        ? DateTime.parse(json['ts'])
-        : DateTime.now().toUtc();
+    DateTime? timestamp = DateTime.tryParse(json['ts']);
 
     // json may not have 'requestId'
     String? requestId = json['requestId'];
@@ -108,7 +106,8 @@ class Response {
 class ErrorResponse extends Response {
   Error error;
 
-  ErrorResponse(String requestId, Action action, DateTime timestamp, this.error)
+  ErrorResponse(
+      String requestId, Action action, DateTime? timestamp, this.error)
       : super(requestId, action, timestamp);
 
   // fromJson, use the super fromJson and then set the error
@@ -122,7 +121,7 @@ class ErrorResponse extends Response {
 class DataResponse extends Response {
   List<Data> data;
 
-  DataResponse(String? requestId, Action action, DateTime timestamp, this.data)
+  DataResponse(String? requestId, Action action, DateTime? timestamp, this.data)
       : super(requestId, action, timestamp);
 
   // fromJson, use the super fromJson and then set the data
@@ -137,7 +136,7 @@ class SubscriptionDataResponse extends DataResponse {
   String subscriptionId;
 
   SubscriptionDataResponse(
-      Action action, DateTime timestamp, List<Data> data, this.subscriptionId)
+      Action action, DateTime? timestamp, List<Data> data, this.subscriptionId)
       : super(null, action, timestamp, data);
 
   // fromJson, use the super fromJson and then set the subscriptionId
@@ -152,7 +151,7 @@ class SubscriptionResponse extends Response {
   String subscriptionId;
 
   SubscriptionResponse(
-      String requestId, Action action, DateTime timestamp, this.subscriptionId)
+      String requestId, Action action, DateTime? timestamp, this.subscriptionId)
       : super(requestId, action, timestamp);
 
   // fromJson, use the super fromJson and then set the path and subscriptionId
