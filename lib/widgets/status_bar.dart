@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:uksc_dashboard/models/telemetry_status.dart';
+import 'package:uksc_dashboard/models/telemetry_status.dart' as telemetry;
 
 /// The preferred height of the status bar
 const statusBarHeight = 35.0;
@@ -82,17 +82,17 @@ class ConnectionStatus extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<TelemetryStatus>(builder: (context, webSocketStatus, child) {
+    return Consumer<telemetry.TelemetryStatus>(builder: (context, webSocketStatus, child) {
       Widget statusIcon;
       Widget statusText;
-      switch (webSocketStatus.status) {
-        case Status.connected:
+      switch (webSocketStatus.state) {
+        case telemetry.State.connected:
           statusIcon = const Icon(Icons.sync, size: 24, color: Colors.green);
           statusText = Text('${webSocketStatus.averageLatencyMs.toStringAsFixed(1)}ms',
               style: Theme.of(context).textTheme.titleMedium, textAlign: TextAlign.center);
 
           break;
-        case Status.connecting:
+        case telemetry.State.connecting:
           // padding object here is a workaround for https://github.com/flutter/flutter/issues/3282
           statusIcon = const Padding(
               padding: EdgeInsets.symmetric(horizontal: 4.0),
@@ -106,7 +106,7 @@ class ConnectionStatus extends StatelessWidget {
           statusText =
               Text('Connecting...', style: Theme.of(context).textTheme.titleMedium, textAlign: TextAlign.center);
           break;
-        case Status.disconnected:
+        case telemetry.State.disconnected:
           statusIcon = const Icon(Icons.sync_problem, size: 24, color: Colors.orange);
           statusText =
               Text('Disconnected', style: Theme.of(context).textTheme.titleMedium, textAlign: TextAlign.center);

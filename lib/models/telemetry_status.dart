@@ -1,21 +1,21 @@
 import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
 
-enum Status { disconnected, connecting, connected }
+enum State { disconnected, connecting, connected }
 
 /// Number of latency measurements to average over
 const latencyAverageCount = 300;
 
 class TelemetryStatus extends ChangeNotifier {
-  var _status = Status.disconnected;
+  var _state = State.disconnected;
 
   var _numErrors = 0;
   final _recentLatencies = <int>[];
 
-  Status get status => _status;
+  State get state => _state;
 
-  set status(newStatus) {
-    _status = newStatus;
+  set state(newStatus) {
+    _state = newStatus;
     notifyListeners();
   }
 
@@ -51,7 +51,7 @@ class TelemetryStatus extends ChangeNotifier {
   @override
   String toString() {
     // return status with first letter capitalized
-    final statusString = status.name.substring(0, 1).toUpperCase() + status.name.substring(1);
+    final statusString = state.name.substring(0, 1).toUpperCase() + state.name.substring(1);
     final errorString = areErrorsPresent ? '($_numErrors errors caught, please check the logs!)' : '';
     return '$statusString $errorString';
   }
