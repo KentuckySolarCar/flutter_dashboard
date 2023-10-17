@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:async';
 
 import 'package:web_socket_channel/web_socket_channel.dart';
+import 'package:logging/logging.dart';
 
 import 'package:uksc_dashboard/api/viss/models/request.dart';
 import 'package:uksc_dashboard/api/viss/models/response.dart';
@@ -12,10 +13,9 @@ class VissApi {
   /// The address pointing to the websocket host
   Uri uri;
 
-  /// The time a message was last received at
-  DateTime lastReceived = DateTime.now();
-
   late WebSocketChannel _websocket;
+
+  final _log = Logger('viss');
 
   final Map<String, Function(SubscriptionDataResponse)> subscriptionCallbacks =
       HashMap();
@@ -34,27 +34,26 @@ class VissApi {
   void connect() {
     _websocket = WebSocketChannel.connect(uri);
     _websocket.stream.listen(_receiveListener, onError: (error, stackTrace) {
-      print('Error: $error Stacktrace: $stackTrace');
+      _log.severe('Error: $error Stacktrace: $stackTrace');
       onError?.call(error);
     }, onDone: () {
-      print('Done');
+      _log.info('Disconnected from VISS server at $uri');
       onDisconnect?.call();
     });
   }
 
   /// The listener for the websocket stream.
   void _receiveListener(dynamic message) {
-    print('Received message: $message');
+    _log.finest('Received message: $message');
     Map<String, dynamic> json = jsonDecode(message);
-    print('Decoded message: $json');
+    _log.finer('Decoded message: $json');
     if (json.containsKey('requestId') || json.containsKey('subscriptionId')) {
-      lastReceived = DateTime.now();
-      var response = Response.fromJson(json);
-
+      final response = Response.fromJson(json);
       if (response is SubscriptionDataResponse) {
-        print('Received subscription data for ${response.subscriptionId}');
+        _log.fine('Received subscription data for ${response.subscriptionId}');
         if (subscriptionCallbacks.containsKey(response.subscriptionId)) {
-          print('Calling subscription callback for ${response.subscriptionId}');
+          _log.finest(
+              'Calling subscription callback for ${response.subscriptionId}');
           subscriptionCallbacks[response.subscriptionId]!(response);
         }
       } else {
@@ -65,46 +64,50 @@ class VissApi {
         }
       }
     } else {
-      // TODO log something (maybe throw an exception?). All responses should have a requestId
-      print('Received message without requestId or subscriptionId: $message');
+      // All VISS messages should have a requestId or subscriptionId
+      _log.warning(
+          'Received message without requestId or subscriptionId: $message');
+      // TODO should we throw here? If so, is Exception the right type?
+      // throw Exception('Received message without requestId or subscriptionId');
+      // we could call onError here?
     }
   }
 
   /// Wait for a response from the VISS websocket server.
   ///
   /// Used internally by [makeRequest] and [subscribe].
-  Future<Response> _receiveResponse(String requestId) async {
+  Future<Response> _receiveResponse(String requestId) {
     if (_responseStreams.containsKey(requestId)) {
       // this is an error, but luckily should never happen
       throw Exception('Request ID already exists');
     }
-
-    print('init new stream');
     // init new stream we will listen to after it is inserted into the map
     StreamController<Response> responseStreamController = StreamController();
     _responseStreams[requestId] = responseStreamController;
-
-    print('awaiting response');
-    // await response from stream, then return
+    _log.finer('Created new response stream for $requestId');
     return responseStreamController.stream.first;
   }
 
   /// Perform a request.
-  Future<Response> makeRequest(Request request) async {
-    print('Making request: ${request.toJson()}');
+  Future<Response> makeRequest(Request request,
+      {willWarnOnSubscribe = true}) async {
+    _log.fine('Making ${request.action.name} request');
+    _log.finest('Request: $request');
     onRequest?.call(request);
-    var response = _receiveResponse(request.requestId);
+    final response = _receiveResponse(request.requestId);
     _websocket.sink.add(jsonEncode(request.toJson()));
-    if (request is SubscribeRequest || request is UnsubscribeRequest) {
-      // TODO log warning, should use subscribe() or unsubscribe() instead to ensure subscription callbacks are handled
-      print(
-          'Warning: subscribe/unsubscribe request made without using subscribe/unsubscribe methods');
+    if (willWarnOnSubscribe &&
+        (request is SubscribeRequest || request is UnsubscribeRequest)) {
+      _log.warning('Subscribe/unsubscribe request made without using '
+          'subscribe/unsubscribe methods. You must manually handle subscription callbacks!');
     }
+    _log.finer('Response received for ${request.requestId}: ${await response}');
     onResponse?.call(await response);
     return response;
   }
 
   void stop() {
+    _log.info('Stopping VISS API');
     _websocket.sink.close();
   }
 
@@ -113,14 +116,20 @@ class VissApi {
   /// Returns a [SubscriptionResponse] if successful, or an [ErrorResponse] if not.
   Future<Response> subscribe(SubscribeRequest request,
       Function(SubscriptionDataResponse) callback) async {
-    print('Making subscription request');
+    _log.fine('Making subscription request for ${request.path}');
+    _log.finest('SubscriptionRequest: $request');
     Response response = await makeRequest(request);
-    assert(response is ErrorResponse || response is SubscriptionResponse);
-    // check if subscriptionResponse
-    print('Adding subscription callback for ${response}');
-    if (response is SubscriptionResponse) {
-      print('Adding subscription callback for ${response.subscriptionId}');
+
+    if (response is ErrorResponse) {
+      _log.severe('Failed to subscribe to ${request.path}: $response');
+      onError?.call(response);
+    } else if (response is SubscriptionResponse) {
+      _log.fine('Subscribed to ${request.path}');
+      _log.finer('Adding subscription callback for ${response.subscriptionId}');
       subscriptionCallbacks[response.subscriptionId] = callback;
+    } else {
+      _log.severe('Received unexpected response: $response');
+      // TODO what should we do here?
     }
     return response;
   }
@@ -129,11 +138,18 @@ class VissApi {
   ///
   /// Returns a [SubscriptionResponse] if successful, or an [ErrorResponse] if not.
   Future<Response> unsubscribe(UnsubscribeRequest request) async {
+    _log.fine('Making unsubscription request for ${request.subscriptionId}');
+    _log.finest('UnsubscribeRequest: $request');
     Response response = await makeRequest(request);
-    assert(response is ErrorResponse || response is SubscriptionResponse);
 
-    // check if not ErrorResponse
-    if (response is! ErrorResponse) {
+    if (response is ErrorResponse) {
+      _log.severe(
+          'Failed to unsubscribe from ${request.subscriptionId}: $response');
+      onError?.call(response);
+    } else {
+      _log.fine('Unsubscribed from ${request.subscriptionId}');
+      _log.finer(
+          'Removing subscription callback for ${request.subscriptionId}');
       subscriptionCallbacks.remove(request.subscriptionId);
     }
     return response;
@@ -152,11 +168,11 @@ class VissApi {
   static String findBestSharedNode(Iterable<String> paths) {
     // create a map of nodes and ints
     Map<String, int> nodeFrequency = HashMap();
-    for (var path in paths) {
-      var nodes = path.split('.');
+    for (final path in paths) {
+      final nodes = path.split('.');
       // generate every possible node from the path
-      for (var i = 0; i < nodes.length; i++) {
-        var node = nodes.sublist(0, i + 1).join('.');
+      for (int i = 0; i < nodes.length; i++) {
+        final node = nodes.sublist(0, i + 1).join('.');
         if (nodeFrequency.containsKey(node)) {
           nodeFrequency[node] = nodeFrequency[node]! + 1;
         } else {
@@ -166,8 +182,8 @@ class VissApi {
     }
 
     // the best node is the longest one with frequency equal to the number of paths
-    var bestNode = '';
-    for (var node in nodeFrequency.keys) {
+    String bestNode = '';
+    for (final node in nodeFrequency.keys) {
       if (nodeFrequency[node] == paths.length &&
           node.length > bestNode.length) {
         bestNode = node;

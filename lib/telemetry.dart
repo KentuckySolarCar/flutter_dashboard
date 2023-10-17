@@ -73,7 +73,7 @@ class TelemetryManager extends ChangeNotifier {
   void connect() async {
     telemetryStatus.state = State.connecting;
     final authorizeResponse =
-    await _vissApi.makeRequest(AuthorizeRequest(superToken));
+        await _vissApi.makeRequest(AuthorizeRequest(superToken));
     if (authorizeResponse is ErrorResponse) {
       // TODO failure handling
       log.severe('Failed to authorize: $authorizeResponse');
