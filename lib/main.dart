@@ -35,18 +35,20 @@ void main(List<String> args) {
   log.config('Logging level set to ${Logger.root.level}');
   log.finer('Parsed arguments: $userArgs');
 
-  final webSocketManager = TelemetryManager(
+  final telemetryManager = TelemetryManager(
       Uri(
           scheme: 'ws',
           host: userArgs['host'],
           port: int.tryParse(userArgs['port']) ?? defaultPort),
-      testing: false);
+      );
+
+  telemetryManager.connect();
 
   final providers = [
     // expose the websocket manager. This won't ever call notifyListeners(), but allows us to access it from anywhere
-    webSocketManager.provider,
-    webSocketManager.telemetryStatus.provider,
-    ...webSocketManager.carModels.map((e) => e.provider),
+    telemetryManager.provider,
+    telemetryManager.telemetryStatus.provider,
+    ...telemetryManager.carModels.map((e) => e.provider),
   ];
 
   log.info('loading dashboard ${userArgs['dashboard']}');
