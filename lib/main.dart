@@ -36,17 +36,15 @@ void main(List<String> args) {
   log.finer('Parsed arguments: $userArgs');
 
   final telemetryManager = TelemetryManager(
-      Uri(
-          scheme: 'ws',
-          host: userArgs['host'],
-          port: int.tryParse(userArgs['port']) ?? defaultPort),
-      );
+    Uri(
+        scheme: 'ws',
+        host: userArgs['host'],
+        port: int.tryParse(userArgs['port']) ?? defaultPort),
+  );
 
   telemetryManager.connect();
 
   final providers = [
-    // expose the websocket manager. This won't ever call notifyListeners(), but allows us to access it from anywhere
-    telemetryManager.provider,
     telemetryManager.telemetryStatus.provider,
     ...telemetryManager.carModels.map((e) => e.provider),
   ];
