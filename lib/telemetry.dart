@@ -30,6 +30,7 @@ class TelemetryManager extends ChangeNotifier {
   Uri uri;
 
   late VissApi _vissApi;
+  int _connectionAttempts = 0;
 
   /// The status model
   final telemetryStatus = TelemetryStatus();
@@ -47,23 +48,20 @@ class TelemetryManager extends ChangeNotifier {
       var bestNode = VissApi.findBestSharedNode(model.nodes);
       log.finest('Best node for ${model.runtimeType}: $bestNode');
       _vissApi.subscribe(SubscribeRequest(bestNode),
-              (subscriptionDataResponse) {
-            log.fine(
-                'Received subscription data for ${subscriptionDataResponse
-                    .subscriptionId}');
-            log.finest('Received $subscriptionDataResponse');
-            model.updateFromData(subscriptionDataResponse.data);
-          }).then((response) =>
-      {
-        if (response is ErrorResponse)
-          {
-            log.severe(
-                'Failed to subscribe to $bestNode for ${model
-                    .runtimeType}: $response')
-          }
-        else
-          {log.fine('Subscribed to $bestNode for ${model.runtimeType}')}
-      });
+          (subscriptionDataResponse) {
+        log.fine(
+            'Received subscription data for ${subscriptionDataResponse.subscriptionId}');
+        log.finest('Received $subscriptionDataResponse');
+        model.updateFromData(subscriptionDataResponse.data);
+      }).then((response) => {
+            if (response is ErrorResponse)
+              {
+                log.severe(
+                    'Failed to subscribe to $bestNode for ${model.runtimeType}: $response')
+              }
+            else
+              {log.fine('Subscribed to $bestNode for ${model.runtimeType}')}
+          });
     }
   }
 
@@ -75,23 +73,45 @@ class TelemetryManager extends ChangeNotifier {
       } else {
         telemetryStatus.numErrors = 0;
       }
+
       if (response.timestamp != null) {
-        final latency = response.timestamp!.difference(
-            response.processedTimestamp);
-        log.finest('Response had latency of $latency');
+        final latency =
+            response.timestamp!.difference(response.processedTimestamp).abs();
         telemetryStatus.addLatency(latency);
       } else {
         log.finest('Response missing timestamp');
       }
+    }, onDisconnect: () {
+      telemetryStatus.state = State.disconnected;
+      // reconnect disconnect
+      log.warning('VISS disconnected');
+
+      telemetryStatus.state = State.connecting;
+      // async wait for time corresponding to 2^_connectionAttempts seconds
+      final waitTime = Duration(seconds: pow(2, _connectionAttempts).toInt());
+      log.fine('Waiting $waitTime before reconnecting');
+      Future.delayed(waitTime, () {
+        // TODO: magic number!!
+        if (_connectionAttempts < 7) {
+          _connectionAttempts++;
+          log.info('Attempting to reconnect to VISS API $uri');
+          connect();
+        } else {
+          telemetryStatus.state = State.error;
+          log.severe('VISS did not reconnect after 5 attempts');
+          // throw exception?
+          throw Exception('VISS did not reconnect after 5 attempts');
+        }
+      });
     });
-    log.info('Connecting to VISS API $uri');
-    _vissApi.connect();
   }
 
   void connect() async {
     telemetryStatus.state = State.connecting;
+    log.info('Connecting to VISS API $uri');
+    _vissApi.connect();
     final authorizeResponse =
-    await _vissApi.makeRequest(AuthorizeRequest(superToken));
+        await _vissApi.makeRequest(AuthorizeRequest(superToken));
     if (authorizeResponse is ErrorResponse) {
       // TODO failure handling
       log.severe('Failed to authorize: $authorizeResponse');

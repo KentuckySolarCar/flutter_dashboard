@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
 
-enum State { disconnected, connecting, connected }
+enum State { disconnected, connecting, connected, error }
 
 /// Number of latency measurements to average over
 const latencyAverageCount = 300;
@@ -38,6 +38,10 @@ class TelemetryStatus extends ChangeNotifier {
 
   /// Add a new latency to the list of recent latencies.
   void addLatency(Duration newLatency) {
+    // latency must be positive
+    if (newLatency.isNegative) {
+      throw ArgumentError('Latency must be positive');
+    }
     _recentLatencies.add(newLatency);
     if (_recentLatencies.length > latencyAverageCount) {
       _recentLatencies.removeAt(0);

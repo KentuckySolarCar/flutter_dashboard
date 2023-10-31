@@ -113,11 +113,17 @@ class ConnectionStatus extends StatelessWidget {
           break;
         case telemetry.State.disconnected:
           statusIcon =
-              const Icon(Icons.sync_problem, size: 24, color: Colors.orange);
+              const Icon(Icons.sync_disabled, size: 24, color: Colors.orange);
           statusText = Text('Disconnected',
               style: Theme.of(context).textTheme.titleMedium,
               textAlign: TextAlign.center);
           break;
+        case telemetry.State.error:
+          statusIcon =
+              const Icon(Icons.sync_problem, size: 24, color: Colors.red);
+          statusText = Text('Error',
+              style: Theme.of(context).textTheme.titleMedium,
+              textAlign: TextAlign.center);
       }
 
       return Row(
