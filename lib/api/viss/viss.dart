@@ -51,6 +51,7 @@ class VissApi {
       final response = Response.fromJson(json);
       if (response is SubscriptionDataResponse) {
         _log.fine('Received subscription data for ${response.subscriptionId}');
+        onResponse?.call(response);
         if (subscriptionCallbacks.containsKey(response.subscriptionId)) {
           _log.finest(
               'Calling subscription callback for ${response.subscriptionId}');
