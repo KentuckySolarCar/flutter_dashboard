@@ -38,7 +38,8 @@ class StatusBar extends StatelessWidget implements PreferredSizeWidget {
             Expanded(
                 child: Align(
               alignment: Alignment.center,
-              child: Wrap(spacing: statusBarChildrenSpacing, children: [...?children]),
+              child: Wrap(
+                  spacing: statusBarChildrenSpacing, children: [...?children]),
             )),
             const Expanded(
                 child: Align(
@@ -82,14 +83,17 @@ class ConnectionStatus extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<telemetry.TelemetryStatus>(builder: (context, webSocketStatus, child) {
+    return Consumer<telemetry.TelemetryStatus>(
+        builder: (context, webSocketStatus, child) {
       Widget statusIcon;
       Widget statusText;
       switch (webSocketStatus.state) {
         case telemetry.State.connected:
           statusIcon = const Icon(Icons.sync, size: 24, color: Colors.green);
-          statusText = Text('${webSocketStatus.averageLatencyMs.toStringAsFixed(1)}ms',
-              style: Theme.of(context).textTheme.titleMedium, textAlign: TextAlign.center);
+          statusText = Text(
+              '${webSocketStatus.averageLatency.inMilliseconds.toStringAsFixed(1)}ms',
+              style: Theme.of(context).textTheme.titleMedium,
+              textAlign: TextAlign.center);
 
           break;
         case telemetry.State.connecting:
@@ -103,13 +107,16 @@ class ConnectionStatus extends StatelessWidget {
                     value: null,
                     strokeWidth: 3,
                   )));
-          statusText =
-              Text('Connecting...', style: Theme.of(context).textTheme.titleMedium, textAlign: TextAlign.center);
+          statusText = Text('Connecting...',
+              style: Theme.of(context).textTheme.titleMedium,
+              textAlign: TextAlign.center);
           break;
         case telemetry.State.disconnected:
-          statusIcon = const Icon(Icons.sync_problem, size: 24, color: Colors.orange);
-          statusText =
-              Text('Disconnected', style: Theme.of(context).textTheme.titleMedium, textAlign: TextAlign.center);
+          statusIcon =
+              const Icon(Icons.sync_problem, size: 24, color: Colors.orange);
+          statusText = Text('Disconnected',
+              style: Theme.of(context).textTheme.titleMedium,
+              textAlign: TextAlign.center);
           break;
       }
 

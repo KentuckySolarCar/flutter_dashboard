@@ -22,8 +22,8 @@ class VissApi {
 
   final Map<String, StreamController<Response>> _responseStreams = HashMap();
 
-  final Function(Response)? onResponse;
   final Function(Request)? onRequest;
+  final Function(Response)? onResponse;
   final Function(Object)? onError;
   final Function()? onDisconnect;
 

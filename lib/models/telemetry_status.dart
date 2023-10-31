@@ -10,7 +10,7 @@ class TelemetryStatus extends ChangeNotifier {
   var _state = State.disconnected;
 
   var _numErrors = 0;
-  final _recentLatencies = <int>[];
+  final _recentLatencies = <Duration>[];
 
   State get state => _state;
 
@@ -28,19 +28,16 @@ class TelemetryStatus extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// The average latency, in nanoseconds.
-  int get averageLatency {
+  /// The average latency
+  Duration get averageLatency {
     if (_recentLatencies.isEmpty) {
-      return 0;
+      return const Duration(milliseconds: 0);
     }
     return _recentLatencies.reduce((a, b) => a + b) ~/ _recentLatencies.length;
   }
 
-  /// The average latency over the last 10 messages, in milliseconds.
-  double get averageLatencyMs => averageLatency / 1000000;
-
   /// Add a new latency to the list of recent latencies.
-  void addLatency(int newLatency) {
+  void addLatency(Duration newLatency) {
     _recentLatencies.add(newLatency);
     if (_recentLatencies.length > latencyAverageCount) {
       _recentLatencies.removeAt(0);
