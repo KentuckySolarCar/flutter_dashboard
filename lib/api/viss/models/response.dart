@@ -71,7 +71,7 @@ class Response {
         ? Action.values.firstWhere((e) => e.name == json['action'])
         : Action.unknown;
 
-    DateTime? timestamp = DateTime.tryParse(json['ts']);
+    DateTime? timestamp = DateTime.tryParse(json['ts'] ?? '');
 
     // json may not have 'requestId'
     String? requestId = json['requestId'];
@@ -88,6 +88,7 @@ class Response {
       } else {
         data.add(Data.fromJson(json['data']));
       }
+      timestamp ??= data.first.dataPoints.first.timestamp;
       if (json.containsKey('subscriptionId')) {
         return SubscriptionDataResponse(
             action, timestamp, data, json['subscriptionId']);
