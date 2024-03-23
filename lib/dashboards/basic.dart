@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:uksc_dashboard/widgets/basic_speed.dart';
 import 'package:uksc_dashboard/widgets/status_bar.dart';
+import 'package:uksc_dashboard/widgets/test_left_motor.dart';
 
 /// A basic dashboard displaying simple stuff such as the speed.
 ///
@@ -16,7 +17,7 @@ class BasicDashboard extends StatelessWidget {
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: const [BasicSpeed(), BasicSpeedGauge()],
+            children: const [BasicSpeed(), MotorTemp(), BasicSpeedGauge()],
           ),
         ));
   }
