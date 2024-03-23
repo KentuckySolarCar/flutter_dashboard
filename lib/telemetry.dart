@@ -37,8 +37,8 @@ class TelemetryManager extends ChangeNotifier {
 
   final List<BaseModel> carModels = [
     Speed(),
-    // LeftMotor(),
-    // RightMotor(),
+    LeftMotor(),
+    RightMotor(),
     // CruiseControl(),
   ];
 
