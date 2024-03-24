@@ -63,11 +63,12 @@ class BaseModel extends ChangeNotifier {
               parsedData = newDatum.latest;
               break;
           }
-          if (data[newDatum.path].runtimeType == parsedData.runtimeType) {
+          if (data[newDatum.path].runtimeType != parsedData.runtimeType) {
             log.severe(
                 'Type mismatch for ${newDatum.path}: ${data[newDatum.path].runtimeType} != ${parsedData.runtimeType}');
             throw Exception('Type mismatch');
           }
+          data[newDatum.path] = parsedData;
           updated = true;
         } catch (e) {
           log.severe(
