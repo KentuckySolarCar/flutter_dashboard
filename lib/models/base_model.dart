@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:logging/logging.dart';
 import 'package:provider/provider.dart';
 
 import 'package:uksc_dashboard/api/viss/models/response.dart';
@@ -8,7 +9,11 @@ class BaseModel extends ChangeNotifier {
   @protected
   final Map<String, dynamic> data;
 
-  BaseModel(this.data);
+  late final Logger log;
+
+  BaseModel(this.data) {
+    log = Logger(runtimeType.toString());
+  }
 
   /// The last time the data was updated
   var lastUpdated = DateTime.now();
@@ -42,15 +47,31 @@ class BaseModel extends ChangeNotifier {
     var updated = false;
     for (final newDatum in newData) {
       if (data.containsKey(newDatum.path)) {
-        // TODO check for type mismatch, log error
-        if (data[newDatum.path].runtimeType == newDatum.latest.runtimeType) {
-          if (data[newDatum.path] != newDatum.latest) {
-            data[newDatum.path] = newDatum.latest;
-            updated = true;
+        try {
+          dynamic parsedData;
+          switch (data[newDatum.path].latest.runtimeType) {
+            case int:
+              parsedData = int.parse(newDatum.latest);
+              break;
+            case double:
+              parsedData = double.parse(newDatum.latest);
+              break;
+            case bool:
+              parsedData = newDatum.latest.toString().toLowerCase() == 'true';
+              break;
+            default:
+              parsedData = newDatum.latest;
+              break;
           }
-        } else {
-          print(
-              'Type mismatch for ${newDatum.path}: ${data[newDatum.path].runtimeType} != ${newDatum.latest.runtimeType}');
+          if (data[newDatum.path].runtimeType == parsedData.runtimeType) {
+            log.severe(
+                'Type mismatch for ${newDatum.path}: ${data[newDatum.path].runtimeType} != ${parsedData.runtimeType}');
+            throw Exception('Type mismatch');
+          }
+          updated = true;
+        } catch (e) {
+          log.severe(
+              'Failed to parse ${newDatum.latest} for ${newDatum.path}: $e');
         }
       }
     }
