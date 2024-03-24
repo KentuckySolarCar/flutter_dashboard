@@ -47,32 +47,38 @@ class BaseModel extends ChangeNotifier {
     var updated = false;
     for (final newDatum in newData) {
       if (data.containsKey(newDatum.path)) {
-        try {
-          dynamic parsedData;
-          switch (data[newDatum.path].latest.runtimeType) {
-            case int:
-              parsedData = int.parse(newDatum.latest);
-              break;
-            case double:
-              parsedData = double.parse(newDatum.latest);
-              break;
-            case bool:
-              parsedData = newDatum.latest.toString().toLowerCase() == 'true';
-              break;
-            default:
-              parsedData = newDatum.latest;
-              break;
-          }
-          if (data[newDatum.path].runtimeType != parsedData.runtimeType) {
-            log.severe(
-                'Type mismatch for ${newDatum.path}: ${data[newDatum.path].runtimeType} != ${parsedData.runtimeType}');
-            throw Exception('Type mismatch');
-          }
-          data[newDatum.path] = parsedData;
+        if (data[newDatum.path].runtimeType == newDatum.latest.runtimeType) {
+          data[newDatum.path] = newDatum.latest;
           updated = true;
-        } catch (e) {
-          log.severe(
-              'Failed to parse ${newDatum.latest} for ${newDatum.path}: $e');
+        } else {
+          try {
+            dynamic parsedData;
+            switch (data[newDatum.path].latest.runtimeType) {
+              case int:
+                parsedData = int.parse(newDatum.latest);
+                break;
+              case double:
+                parsedData = double.parse(newDatum.latest);
+                break;
+              case bool:
+                parsedData = newDatum.latest.toString().toLowerCase() == 'true';
+                break;
+              default:
+                parsedData = newDatum.latest;
+                break;
+            }
+            if (data[newDatum.path].runtimeType != parsedData.runtimeType) {
+              log.severe(
+                  'Type mismatch for ${newDatum.path}: ${data[newDatum.path]
+                      .runtimeType} != ${parsedData.runtimeType}');
+              throw Exception('Type mismatch');
+            }
+            data[newDatum.path] = parsedData;
+            updated = true;
+          } catch (e) {
+            log.severe(
+                'Failed to parse ${newDatum.latest} for ${newDatum.path}: $e');
+          }
         }
       }
     }
