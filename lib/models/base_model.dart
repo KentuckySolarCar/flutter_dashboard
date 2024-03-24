@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:logging/logging.dart';
 import 'package:provider/provider.dart';
 
 import 'package:uksc_dashboard/api/viss/models/response.dart';
@@ -8,7 +9,11 @@ class BaseModel extends ChangeNotifier {
   @protected
   final Map<String, dynamic> data;
 
-  BaseModel(this.data);
+  late final Logger log;
+
+  BaseModel(this.data) {
+    log = Logger(runtimeType.toString());
+  }
 
   /// The last time the data was updated
   var lastUpdated = DateTime.now();
@@ -42,18 +47,48 @@ class BaseModel extends ChangeNotifier {
     var updated = false;
     for (final newDatum in newData) {
       if (data.containsKey(newDatum.path)) {
-        // TODO check for type mismatch, log error
-        if (data[newDatum.path].runtimeType == newDatum.latest.runtimeType) {
-          if (data[newDatum.path] != newDatum.latest) {
-            data[newDatum.path] = newDatum.latest;
-            updated = true;
+        final expectedType = data[newDatum.path].runtimeType;
+        final newDatumType = newDatum.latest.runtimeType;
+
+        var newValue = newDatum.latest;
+        // if the types don't match, attempt to parse
+        if (expectedType != newDatumType) {
+          dynamic parsedData;
+          switch (expectedType) {
+            case == int:
+              parsedData = int.tryParse(newDatum.latest.toString());
+              break;
+            case == double:
+              if (newDatumType == int) {
+                parsedData = newDatum.latest.toDouble();
+              } else {
+                parsedData = double.tryParse(newDatum.latest.toString());
+              }
+              break;
+            case == bool:
+              parsedData = bool.tryParse(newDatum.latest.toString(),
+                  caseSensitive: false);
+              break;
+            default:
+              parsedData = newDatum.latest;
+              break;
           }
-        } else {
-          print(
-              'Type mismatch for ${newDatum.path}: ${data[newDatum.path].runtimeType} != ${newDatum.latest.runtimeType}');
+          newValue = parsedData;
         }
+
+        if (expectedType == newValue.runtimeType) {
+          // yay types matched! we can now update this and move on :)
+          data[newDatum.path] = newValue;
+          updated = true;
+          continue;
+        }
+
+        // if the types STILL don't match, well we tried.
+        log.severe(
+            'Type mismatch for ${newDatum.path}: Could not convert "${newDatum.latest}" of type "$newDatumType" to expected type "$expectedType"');
       }
     }
+
     if (updated) {
       lastUpdated = DateTime.now();
       notifyListeners();
