@@ -5,15 +5,15 @@ class _Motor extends BaseModel {
   // keys should match what we expect to have to parse
   _Motor(String instance)
       : super({
-          'Vehicle.PowerTrain.ElectricMotor.$instance.MaxPower': '0',
-          'Vehicle.PowerTrain.ElectricMotor.$instance.MaxTorque': '0',
-          'Vehicle.PowerTrain.ElectricMotor.$instance.MaxRegenPower': '0',
-          'Vehicle.PowerTrain.ElectricMotor.$instance.MaxRegenTorque': '0',
-          'Vehicle.PowerTrain.ElectricMotor.$instance.Speed': '0',
-          'Vehicle.PowerTrain.ElectricMotor.$instance.Temperature': '0',
-          'Vehicle.PowerTrain.ElectricMotor.$instance.Power': '0',
-          'Vehicle.PowerTrain.ElectricMotor.$instance.Torque': '0',
-          'Vehicle.Powertrain.ElectricMotor.$instance.ControllerVoltage': '0.0',
+          'Vehicle.PowerTrain.ElectricMotor.$instance.MaxPower': 0.0,
+          'Vehicle.PowerTrain.ElectricMotor.$instance.MaxTorque': 0.0,
+          'Vehicle.PowerTrain.ElectricMotor.$instance.MaxRegenPower': 0.0,
+          'Vehicle.PowerTrain.ElectricMotor.$instance.MaxRegenTorque': 0.0,
+          'Vehicle.PowerTrain.ElectricMotor.$instance.Speed': 0.0,
+          'Vehicle.PowerTrain.ElectricMotor.$instance.Temperature': 0.0,
+          'Vehicle.PowerTrain.ElectricMotor.$instance.Power': 0.0,
+          'Vehicle.PowerTrain.ElectricMotor.$instance.Torque': 0.0,
+          'Vehicle.Powertrain.ElectricMotor.$instance.ControllerVoltage': 0.0,
           // Used to be .MotorTemp
         });
 
@@ -26,7 +26,7 @@ class _Motor extends BaseModel {
 class LeftMotor extends _Motor {
   LeftMotor() : super('MotorLeft');
 
-  double get leftMotorTemp => double.parse(data['Vehicle.Powertrain.ElectricMotor.MotorLeft.ControllerVoltage']);
+  double get leftMotorTemp => data['Vehicle.Powertrain.ElectricMotor.MotorLeft.ControllerVoltage'];
   
   @override
   ChangeNotifierProvider<LeftMotor> get provider =>
