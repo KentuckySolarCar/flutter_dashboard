@@ -1,3 +1,4 @@
+import 'package:provider/provider.dart';
 import 'package:uksc_dashboard/models/base_model.dart';
 
 class Button {
@@ -60,4 +61,16 @@ class SteeringWheel extends BaseModel {
   Button get buttonCruisePlus => _buttons['cruise_plus']!;
 
   Button get buttonCruiseMinus => _buttons['cruise_minus']!;
+}
+
+class Pedals extends BaseModel {
+  Pedals()
+    :
+      super({'Vehicle.Chassis.Accelerator.PedalPosition' : '0.0'});
+
+    double get throttlePercentage => double.parse(data['Vehicle.Chassis.Accelerator.PedalPosition']);
+
+  @override
+  ChangeNotifierProvider<Pedals> get provider =>
+      ChangeNotifierProvider.value(value: this);
 }
