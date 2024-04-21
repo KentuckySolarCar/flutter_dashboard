@@ -15,10 +15,14 @@ import 'package:uksc_dashboard/models/motors.dart';
 import 'package:uksc_dashboard/models/speed.dart';
 import 'package:uksc_dashboard/models/base_model.dart';
 import 'package:uksc_dashboard/models/telemetry_status.dart';
+import 'package:uksc_dashboard/models/controls.dart';
+import 'package:uksc_dashboard/models/status.dart';
+
 
 import 'package:uksc_dashboard/api/viss/viss.dart';
 import 'package:uksc_dashboard/api/viss/models/request.dart';
 import 'package:uksc_dashboard/api/viss/models/response.dart';
+
 
 final log = Logger('telemetry');
 
@@ -39,7 +43,9 @@ class TelemetryManager extends ChangeNotifier {
     Speed(),
     LeftMotor(),
     RightMotor(),
-    // CruiseControl(),
+    Pedals(),
+    Status(),
+    CruiseControl(),
   ];
 
   void _subscribeModels() async {
