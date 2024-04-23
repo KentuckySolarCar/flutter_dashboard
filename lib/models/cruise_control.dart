@@ -6,7 +6,7 @@ class CruiseControl extends BaseModel {
       : super({
           'Vehicle.ADAS.CruiseControl.SpeedSet': '0.0',
           'Vehicle.ADAS.CruiseControl.IsActive': 'false',
-          'Vehicle.ADAS.CruiseControl.IsEnabled' : '0'
+          'Vehicle.ADAS.CruiseControl.IsEnabled' : '1'
         });
 
   /// The set point in mph
@@ -14,10 +14,10 @@ class CruiseControl extends BaseModel {
   // testing line - double get setPoint => 10;
 
   /// Whether cruise control is actively in control of modulating speed
-  bool get active => data['Vehicle.ADAS.CruiseControl.IsActive']! == 'true';
+  bool get active => data['Vehicle.ADAS.CruiseControl.IsActive'] == '1';
 
   /// Whether cruise control is on (not set, inactive, not in control)
-  bool get enabled => data['Vehicle.ADAS.CruiseControl.IsEnabled']! == 1;
+  bool get enabled => data['Vehicle.ADAS.CruiseControl.IsEnabled'] == '1';
   // testing line - bool get enabled => true;
   @override
   ChangeNotifierProvider<CruiseControl> get provider =>
