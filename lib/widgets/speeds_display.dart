@@ -64,6 +64,8 @@ class SpeedDisplay extends StatelessWidget {
               double opacity = 1.0;
               String displayCCSpeed = '0';
 
+              // I would like to change this to where the CC indicator comes on when enabled
+              // And this speed display only comes on when the cruise is active
               if (!cruiseControl.enabled) {
                 textColor = Colors.grey;
                 displayCCSpeed = 'N/A';
