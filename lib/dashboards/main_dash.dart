@@ -4,6 +4,7 @@ import 'package:uksc_dashboard/widgets/speeds_display.dart';
 import 'package:uksc_dashboard/widgets/status_bar.dart';
 import 'package:uksc_dashboard/widgets/throttle.dart';
 import 'package:uksc_dashboard/widgets/indicator_lights.dart';
+import 'package:uksc_dashboard/widgets/battery_indicators.dart'; // Import the BatteryDisplay widget
 
 class MainDashboard extends StatelessWidget {
   const MainDashboard({Key? key}) : super(key: key);
@@ -21,6 +22,30 @@ class MainDashboard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                Container(
+                  padding: const EdgeInsets.all(3),
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(1),
+                              color: Colors.white,
+                            ),
+                            child: const Padding(
+                              padding: EdgeInsets.all(1),
+                              child: BatteryDisplay(), // Add BatteryDisplay widget here
+                            ),
+                          ),
+                          const SizedBox(height: 10), // Adjust as needed for spacing
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
                 Container(
                   padding: const EdgeInsets.all(3),
                   child: Stack(
