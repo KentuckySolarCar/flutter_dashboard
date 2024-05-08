@@ -7,7 +7,7 @@ class Throttle extends StatelessWidget {
   const Throttle({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     return Material(
       child: Column(
         children: [
@@ -19,20 +19,23 @@ class Throttle extends StatelessWidget {
               color: Colors.white,
             ),
           ),
-          Consumer<Pedals>(
-            builder: (context, throttle, child) {
-              return SfLinearGauge(
-                orientation: LinearGaugeOrientation.vertical,
-                interval: 50,
-                barPointers: [
-                  LinearBarPointer(
-                    value: throttle.throttlePercentage,
-                    color: Colors.green,
-                    thickness: 10,
-                  )
-                ],
-              );
-            },
+          SizedBox(
+            height: 200, // Adjust the height as needed
+            child: Consumer<Pedals>(
+              builder: (context, throttle, child) {
+                return SfLinearGauge(
+                  orientation: LinearGaugeOrientation.vertical,
+                  interval: 50,
+                  barPointers: [
+                    LinearBarPointer(
+                      value: throttle.throttlePercentage,
+                      color: Colors.green,
+                      thickness: 10,
+                    )
+                  ],
+                );
+              },
+            ),
           ),
         ],
       ),
