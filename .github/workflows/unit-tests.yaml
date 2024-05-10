@@ -1,5 +1,12 @@
 name: unit-tests
-on: [push, workflow_dispatch]
+on:
+  push:
+    branches:
+    - main
+  pull_request:
+    branches:
+    - main
+  workflow_dispatch:
 jobs:
   unit-tests:
     runs-on: ubuntu-latest
