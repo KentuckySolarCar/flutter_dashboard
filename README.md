@@ -1,4 +1,5 @@
 # flutter_dashboard
+[![unit-tests](https://github.com/KentuckySolarCar/flutter_dashboard/actions/workflows/unit-tests.yaml/badge.svg?branch=main)](https://github.com/KentuckySolarCar/flutter_dashboard/actions/workflows/unit-tests.yaml)
 
 Next-gen dashboard built in Flutter for UK solar car as a part of Project C.O.L.E.
 
