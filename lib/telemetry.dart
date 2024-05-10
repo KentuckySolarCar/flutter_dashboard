@@ -45,23 +45,24 @@ class TelemetryManager extends ChangeNotifier {
   void _subscribeModels() async {
     log.info('Subscribing models...');
     for (final model in carModels) {
-      var bestNode = VissApi.findBestSharedNode(model.nodes);
-      log.finest('Best node for ${model.runtimeType}: $bestNode');
-      _vissApi.subscribe(SubscribeRequest(bestNode),
-          (subscriptionDataResponse) {
-        log.fine(
-            'Received subscription data for ${subscriptionDataResponse.subscriptionId}');
-        log.finest('Received $subscriptionDataResponse');
-        model.updateFromData(subscriptionDataResponse.data);
-      }).then((response) => {
-            if (response is ErrorResponse)
-              {
-                log.severe(
-                    'Failed to subscribe to $bestNode for ${model.runtimeType}: $response')
-              }
-            else
-              {log.fine('Subscribed to $bestNode for ${model.runtimeType}')}
-          });
+      // var bestNode = VissApi.findBestSharedNode(model.nodes);
+      // log.finest('Best node for ${model.runtimeType}: $bestNode');
+      for (final node in model.nodes) {
+        _vissApi.subscribe(SubscribeRequest(node), (subscriptionDataResponse) {
+          log.fine(
+              'Received subscription data for ${subscriptionDataResponse.subscriptionId}');
+          log.finest('Received $subscriptionDataResponse');
+          model.updateFromData(subscriptionDataResponse.data);
+        }).then((response) => {
+              if (response is ErrorResponse)
+                {
+                  log.severe(
+                      'Failed to subscribe to $node for ${model.runtimeType}: $response')
+                }
+              else
+                {log.fine('Subscribed to $node for ${model.runtimeType}')}
+            });
+      }
     }
   }
 
