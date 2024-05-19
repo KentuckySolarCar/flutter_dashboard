@@ -43,35 +43,38 @@ class BatteryDisplay extends StatelessWidget {
   }
 
   Widget _buildBatteryInfo(BuildContext context, String label, String Function(Battery) getValue) {
-    Battery battery = Provider.of<Battery>(context);
-    String value = getValue(battery);
+  Battery battery = Provider.of<Battery>(context);
+  String value = getValue(battery);
 
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(5),
-        border: Border.all(color: Colors.white),
-      ),
-      padding: EdgeInsets.all(5),
-      child: Column(
-        children: [
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.white.withOpacity(0.8), // Semi-transparent white text
-            ),
+  return Container(
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(5),
+      border: Border.all(color: Colors.white),
+    ),
+    height: 60,
+    width: 135,
+    padding: EdgeInsets.all(2),
+    child: Column(
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 14,
+            color: Colors.white.withOpacity(0.8), // Semi-transparent white text
           ),
-          SizedBox(height: 5),
-          Text(
-            value,
-            style: const TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
+        ),
+        SizedBox(height: 5),
+        Text(
+          double.tryParse(value)?.toStringAsFixed(2) ?? 'N/A', // Ensure value has 2 decimal points
+          style: const TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
           ),
-        ],
-      ),
-    );
-  }
+        ),
+      ],
+    ),
+  );
+}
+
 }
