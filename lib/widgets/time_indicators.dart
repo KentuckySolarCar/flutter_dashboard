@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:uksc_dashboard/models/timing.dart';
 
+//TODO lock decimal readout for laptime and real time
+//TODO lock size of the widget itself
 class TimeReadout extends StatelessWidget {
   const TimeReadout({Key? key}) : super(key: key);
 
