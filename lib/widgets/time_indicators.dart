@@ -58,7 +58,6 @@ class TimeReadout extends StatelessWidget {
     if (milliseconds > 0) {
       timeString += '.${milliseconds.toString().padLeft(2, '0')}';
     }
-
     return timeString;
   }
 
@@ -71,6 +70,4 @@ class TimeReadout extends StatelessWidget {
 
     return formattedTime;
   }
-
-
 }

@@ -17,9 +17,6 @@ class _Motor extends BaseModel {
           // Used to be .MotorTemp
         });
 
-
-  // TODO: getter methods
-
 }
 
 // create classes for both motors so we can have separate providers

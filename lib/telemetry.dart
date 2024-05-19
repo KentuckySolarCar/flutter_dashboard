@@ -50,6 +50,7 @@ class TelemetryManager extends ChangeNotifier {
     CruiseControl(),
     Battery(),
     Timing(),
+    SteeringWheel(),
   ];
 
   void _subscribeModels() async {

@@ -12,106 +12,90 @@ class SpeedDisplay extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Consumer<Speed>(
-            builder: (context, speed, child) {
-              Color textColor;
-              double opacity = 1.0;
-
-              if (speed.mph > 50) {
-                // Calculate opacity based on how much above 50 MPH
-                opacity = (speed.mph - 50) / 50;
-                textColor = Color.fromRGBO(255, (255 * (1 - opacity)).toInt(), 0, 1);
-              } else {
-                textColor = Colors.white;
-              }
-
-              String displaySpeed = speed.mph.abs() < 10
-                  ? speed.mph.abs().toStringAsFixed(1)
-                  : speed.mph.abs().toStringAsFixed(0);
-
-              return Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5),
-                  border: Border.all(color: Colors.white),
-                ),
-                padding: const EdgeInsets.all(10),
-                child: Column(
-                  children: [
-                    const Text(
-                      'Speed MPH',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                    Text(
-                      displaySpeed,
-                      style: TextStyle(
-                        fontSize: 40,
-                        color: textColor.withOpacity(opacity),
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
-          const SizedBox(height: 5), // Add some spacing between the speed displays
-          Consumer<CruiseControl>(
-            builder: (context, cruiseControl, child) {
-              Color textColor;
-              double opacity = 1.0;
-              String displayCCSpeed = '0';
-
-              // I would like to change this to where the CC indicator comes on when enabled
-              // And this speed display only comes on when the cruise is active
-              if (!cruiseControl.enabled) {
-                textColor = Colors.grey;
-                displayCCSpeed = 'N/A';
-              } else {
-                // Cruise control is enabled, get setPoint from cruiseControl
-                // Assuming the setPoint is of type double
-                displayCCSpeed = cruiseControl.setPoint.toStringAsFixed(0);
-                // Calculate opacity and text color based on setPoint value
-                if (cruiseControl.setPoint > 50) {
-                  opacity = (cruiseControl.setPoint - 50) / 50;
-                  textColor = Color.fromRGBO(255, (255 * (1 - opacity)).toInt(), 0, 1);
-                } else {
-                  textColor = Colors.white;
-                }
-              }
-
-              return Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5),
-                  border: Border.all(color: Colors.white),
-                ),
-                padding: const EdgeInsets.all(10),
-                child: Column(
-                  children: [
-                    const Text(
-                      'CC Speed',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                    Text(
-                      displayCCSpeed,
-                      style: TextStyle(
-                        fontSize: 40,
-                        color: textColor.withOpacity(opacity),
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
+          _buildSpeedDisplay(context),
+          const SizedBox(height: 5),
+          _buildCCSpeedDisplay(context),
         ],
       ),
+    );
+  }
+
+  Widget _buildSpeedDisplay(BuildContext context) {
+    return Consumer<Speed>(
+      builder: (context, speed, child) {
+        Color textColor = speed.mph > 50
+            ? Color.fromRGBO(255, (255 * (1 - (speed.mph - 50) / 50)).toInt(), 0, 1)
+            : Colors.white;
+
+        String displaySpeed = speed.mph.abs() < 10
+            ? speed.mph.abs().toStringAsFixed(1)
+            : speed.mph.abs().toStringAsFixed(0);
+
+        return Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(5),
+            border: Border.all(color: Colors.white, width: 2),
+          ),
+          padding: const EdgeInsets.all(10),
+          width: 120,
+          child: Column(
+            children: [
+              const Text(
+                'Speed MPH',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+              Text(
+                displaySpeed,
+                style: TextStyle(
+                  fontSize: 40,
+                  color: textColor.withOpacity(speed.mph > 50 ? (speed.mph - 50) / 50 : 1.0),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildCCSpeedDisplay(BuildContext context) {
+    return Consumer<CruiseControl>(
+      builder: (context, cruiseControl, child) {
+
+        String displayCCSpeed = cruiseControl.enabled ? cruiseControl.setPoint.toStringAsFixed(0) : 'N/A';
+
+        return Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(5),
+            border: Border.all(color: Colors.white, width: 2),
+          ),
+          padding: const EdgeInsets.all(10),
+          width: 120,
+          child: Column(
+            children: [
+              const Text(
+                'CC Speed',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+              Text(
+                displayCCSpeed,
+                style: TextStyle(
+                  fontSize: 40,
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

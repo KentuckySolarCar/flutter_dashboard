@@ -29,7 +29,7 @@ const _buttonNames = [
 ];
 
 class SteeringWheel extends BaseModel {
-  late Map<String, Button> _buttons;
+  late final Map<String, Button> _buttons = {};
 
   // map each buttonName to button_name_short and button_name_long for super call
   SteeringWheel()
