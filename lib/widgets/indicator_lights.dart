@@ -3,6 +3,49 @@ import 'package:provider/provider.dart';
 import 'package:uksc_dashboard/models/status.dart';
 import 'package:uksc_dashboard/models/cruise_control.dart';
 
+class StateIconIndicator extends StatefulWidget {
+  final Color activeColor;
+  final Color inactiveColor;
+  final IconData activeIcon;
+  final IconData inactiveIcon;
+  final bool isActive;
+
+  const StateIconIndicator({
+    Key? key,
+    required this.activeColor,
+    required this.inactiveColor,
+    required this.isActive,
+    required this.activeIcon,
+    required this.inactiveIcon,
+  }) : super(key: key);
+
+  @override
+  _StateIconIndicatorState createState() => _StateIconIndicatorState();
+}
+
+class _StateIconIndicatorState extends State<StateIconIndicator> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 60,
+      height: 60,
+      decoration: BoxDecoration(
+        shape: BoxShape.rectangle,
+        color: widget.isActive ? widget.activeColor : widget.inactiveColor,
+        borderRadius: BorderRadius.circular(5),
+      ),
+      margin: EdgeInsets.all(5),
+      child: Center(
+        child: Icon(
+          widget.isActive ? widget.activeIcon : widget.inactiveIcon,
+          color: Colors.white,
+          size: 45,
+        ),
+      ),
+    );
+  }
+}
+
 class StateIndicator extends StatelessWidget {
   final Color activeColor;
   final Color inactiveColor;
@@ -36,7 +79,7 @@ class StateIndicator extends StatelessWidget {
         child: Text(
           isActive ? activeText : inactiveText,
           style: TextStyle(
-            color: isActive ? Colors.white : Colors.white,
+            color: Colors.white,
             fontWeight: FontWeight.bold,
             fontSize: textSize,
           ),
@@ -45,7 +88,6 @@ class StateIndicator extends StatelessWidget {
     );
   }
 }
-
 
 class IndicatorLightsRow extends StatelessWidget {
   @override
@@ -59,8 +101,8 @@ class IndicatorLightsRow extends StatelessWidget {
             activeColor: Colors.green,
             inactiveColor: Colors.red,
             isActive: status.forwardReverse,
-            activeText: "F",
-            inactiveText: "R",
+            activeText: "FR",
+            inactiveText: "RV",
             textSize: 40,
           ),
         ),
@@ -71,7 +113,7 @@ class IndicatorLightsRow extends StatelessWidget {
             inactiveColor: Colors.grey[600]!,
             isActive: status.wheelPedal,
             activeText: "P",
-            inactiveText: "W",
+            inactiveText: "T",
             textSize: 40,
           ),
         ),
@@ -86,7 +128,16 @@ class IndicatorLightsRow extends StatelessWidget {
             textSize: 35,
           ),
         ),
-        // Add more StateIndicators as needed
+        // Error indicator
+        Consumer<Status>(
+          builder: (context, status, child) => StateIconIndicator(
+            activeColor: Colors.red,
+            inactiveColor: Colors.grey,
+            isActive: false,
+            activeIcon: Icons.error,
+            inactiveIcon: Icons.error_outline,
+          ),
+        ),
       ],
     );
   }

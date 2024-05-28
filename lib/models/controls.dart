@@ -1,6 +1,8 @@
 import 'package:provider/provider.dart';
 import 'package:uksc_dashboard/models/base_model.dart';
 
+//TODO note that button L is the lap time reset
+
 class Button {
   /// The name of this button.
   final String name;
@@ -15,17 +17,17 @@ class Button {
 }
 
 const _buttonNames = [
-  'x',
-  'y',
-  'a',
-  'b',
-  'l',
-  'r',
-  'right_turn',
-  'left_turn',
-  'cruise_main',
-  'cruise_plus',
-  'cruise_minus'
+  'Button_X',
+  'Button_Y',
+  'Button_A',
+  'Button_B',
+  'Button_L',
+  'Button_R',
+  'Right_Turn',
+  'Left_Turn',
+  'Cruise_Main',
+  'Cruise_Plus',
+  'Cruise_Minus'
 ];
 
 class SteeringWheel extends BaseModel {
@@ -33,34 +35,40 @@ class SteeringWheel extends BaseModel {
 
   // map each buttonName to button_name_short and button_name_long for super call
   SteeringWheel()
-      : super({for (var name in _buttonNames) 'button_${name}_short': 0.toString()}
-          ..addAll({for (var name in _buttonNames) 'button_${name}_long': 0.toString()})) {
+      : super({for (var name in _buttonNames) '${name}_Short_Press_Count': 0.toString()}
+          ..addAll({for (var name in _buttonNames) '${name}_Long_Press_Count': 0.toString()})) {
     for (var name in _buttonNames) {
-      _buttons[name] = Button(name, int.parse(data['button_${name}_long']!), int.parse(data['button_${name}_short']!));
+      _buttons[name] = Button(name, int.parse(data['${name}_Long_Press_Count']!), int.parse(data['${name}_Short_Press_Count']!));
     }
   }
 
-  Button get buttonX => _buttons['x']!;
+  Button get buttonX => _buttons['Button_X']!;
 
-  Button get buttonY => _buttons['y']!;
+  Button get buttonY => _buttons['Button_Y']!;
 
-  Button get buttonA => _buttons['a']!;
+  Button get buttonA => _buttons['Button_A']!;
 
-  Button get buttonB => _buttons['b']!;
+  Button get buttonB => _buttons['Button_B']!;
 
-  Button get buttonL => _buttons['l']!;
+  Button get buttonL => _buttons['Button_L']!;
 
-  Button get buttonR => _buttons['r']!;
+  Button get buttonR => _buttons['Button_R']!;
 
-  Button get buttonRightTurn => _buttons['right_turn']!;
+  Button get buttonRightTurn => _buttons['Right_Turn']!;
 
-  Button get buttonLeftTurn => _buttons['left_turn']!;
+  Button get buttonLeftTurn => _buttons['Left_Turn']!;
 
-  Button get buttonCruiseMain => _buttons['cruise_main']!;
+  Button get buttonCruiseMain => _buttons['Cruise_Main']!;
 
-  Button get buttonCruisePlus => _buttons['cruise_plus']!;
+  Button get buttonCruisePlus => _buttons['Cruise_Plus']!;
 
-  Button get buttonCruiseMinus => _buttons['cruise_minus']!;
+  Button get buttonCruiseMinus => _buttons['Cruise_Minus']!;
+
+  //Button get buttonLeftTurn => Button('Left_Turn', 1, 3);
+
+  @override
+  ChangeNotifierProvider<SteeringWheel> get provider =>
+      ChangeNotifierProvider.value(value: this);
 }
 
 class Pedals extends BaseModel {
@@ -74,3 +82,4 @@ class Pedals extends BaseModel {
   ChangeNotifierProvider<Pedals> get provider =>
       ChangeNotifierProvider.value(value: this);
 }
+
