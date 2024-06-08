@@ -19,6 +19,8 @@ import 'package:uksc_dashboard/models/controls.dart';
 import 'package:uksc_dashboard/models/status.dart';
 import 'package:uksc_dashboard/models/battery.dart';
 import 'package:uksc_dashboard/models/timing.dart';
+import 'package:uksc_dashboard/models/errors.dart';
+
 
 
 import 'package:uksc_dashboard/api/viss/viss.dart';
@@ -51,6 +53,7 @@ class TelemetryManager extends ChangeNotifier {
     Battery(),
     Timing(),
     SteeringWheel(),
+    Errors(),
   ];
 
   void _subscribeModels() async {

@@ -14,7 +14,7 @@ class _Motor extends BaseModel {
           'Vehicle.PowerTrain.ElectricMotor.$instance.Power': '0',
           'Vehicle.PowerTrain.ElectricMotor.$instance.Torque': '0',
           'Vehicle.Powertrain.ElectricMotor.$instance.ControllerVoltage': '0.0',
-          // Used to be .MotorTemp
+          // Used to be .MotorTemp but temperature fetching has been changed a little
         });
 
 }

@@ -1,8 +1,5 @@
 import 'package:provider/provider.dart';
 import 'package:uksc_dashboard/models/base_model.dart';
-
-//TODO note that button L is the lap time reset
-
 class Button {
   /// The name of this button.
   final String name;
@@ -33,7 +30,7 @@ const _buttonNames = [
 class SteeringWheel extends BaseModel {
   late final Map<String, Button> _buttons = {};
 
-  // map each buttonName to button_name_short and button_name_long for super call
+  //Map each buttonName to button_name_short and button_name_long for super call
   SteeringWheel()
       : super({for (var name in _buttonNames) '${name}_Short_Press_Count': 0.toString()}
           ..addAll({for (var name in _buttonNames) '${name}_Long_Press_Count': 0.toString()})) {
@@ -41,7 +38,7 @@ class SteeringWheel extends BaseModel {
       _buttons[name] = Button(name, int.parse(data['${name}_Long_Press_Count']!), int.parse(data['${name}_Short_Press_Count']!));
     }
   }
-
+  //Defining button data members
   Button get buttonX => _buttons['Button_X']!;
 
   Button get buttonY => _buttons['Button_Y']!;
@@ -50,7 +47,7 @@ class SteeringWheel extends BaseModel {
 
   Button get buttonB => _buttons['Button_B']!;
 
-  Button get buttonL => _buttons['Button_L']!;
+  Button get buttonL => _buttons['Button_L']!; //Laptime reset
 
   Button get buttonR => _buttons['Button_R']!;
 
@@ -71,10 +68,11 @@ class SteeringWheel extends BaseModel {
       ChangeNotifierProvider.value(value: this);
 }
 
+
 class Pedals extends BaseModel {
+  //Pedals get their own provider because there may be a throttle and brake pedal
   Pedals()
-    :
-      super({'Vehicle.Chassis.Accelerator.PedalPosition' : '0.0'});
+    : super({'Vehicle.Chassis.Accelerator.PedalPosition' : '0.0'});
 
     double get throttlePercentage => double.parse(data['Vehicle.Chassis.Accelerator.PedalPosition']);
 

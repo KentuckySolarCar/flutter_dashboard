@@ -1,6 +1,6 @@
 import 'package:provider/provider.dart';
 import 'package:uksc_dashboard/models/base_model.dart';
-
+// Provider for all signals related to time.
 class Timing extends BaseModel {
 
   Timing()

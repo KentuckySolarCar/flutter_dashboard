@@ -3,6 +3,9 @@ import 'package:provider/provider.dart';
 import 'package:uksc_dashboard/models/speed.dart';
 import 'package:uksc_dashboard/models/cruise_control.dart';
 
+//TODO fix bug where when the speed is at 10 mph it will display 10.0 mph and overflow the widget
+
+// Class that builds the two speed displays
 class SpeedDisplay extends StatelessWidget {
   const SpeedDisplay({Key? key}) : super(key: key);
 
@@ -13,13 +16,14 @@ class SpeedDisplay extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           _buildSpeedDisplay(context),
-          const SizedBox(height: 5),
+          const SizedBox(height: 30),
           _buildCCSpeedDisplay(context),
         ],
       ),
     );
   }
 
+  // Widget that displays the speed
   Widget _buildSpeedDisplay(BuildContext context) {
     return Consumer<Speed>(
       builder: (context, speed, child) {
@@ -27,6 +31,7 @@ class SpeedDisplay extends StatelessWidget {
             ? Color.fromRGBO(255, (255 * (1 - (speed.mph - 50) / 50)).toInt(), 0, 1)
             : Colors.white;
 
+        // Display one decimal point when below 10 mph and none when above
         String displaySpeed = speed.mph.abs() < 10
             ? speed.mph.abs().toStringAsFixed(1)
             : speed.mph.abs().toStringAsFixed(0);
@@ -51,7 +56,8 @@ class SpeedDisplay extends StatelessWidget {
               Text(
                 displaySpeed,
                 style: TextStyle(
-                  fontSize: 40,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 45,
                   color: textColor.withOpacity(speed.mph > 50 ? (speed.mph - 50) / 50 : 1.0),
                 ),
               ),
@@ -62,6 +68,7 @@ class SpeedDisplay extends StatelessWidget {
     );
   }
 
+  // Widget that displays the CC speed only when it is enabled
   Widget _buildCCSpeedDisplay(BuildContext context) {
     return Consumer<CruiseControl>(
       builder: (context, cruiseControl, child) {
@@ -88,7 +95,7 @@ class SpeedDisplay extends StatelessWidget {
               Text(
                 displayCCSpeed,
                 style: TextStyle(
-                  fontSize: 40,
+                  fontSize: 35,
                   color: Colors.white,
                 ),
               ),

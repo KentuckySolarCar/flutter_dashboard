@@ -14,6 +14,7 @@ import 'package:uksc_dashboard/widgets/time_indicators.dart';
 
 //TODO Maybe rather than it being a status bar we can just put the turn signal widget at the top.
 //TODO decide on what were gonna do for appbar. As of now it will be a signal strength indicator.
+//TODO Align main widgets with bottom and rest with the top.
 class MainDashboard extends StatelessWidget {
   const MainDashboard({Key? key}) : super(key: key);
 
@@ -26,7 +27,6 @@ class MainDashboard extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const TurnSignalBar(),
             IndicatorLightsRow(),
             SizedBox(height: 5),
             Row(
@@ -37,10 +37,10 @@ class MainDashboard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(5),
                     border: Border.all(color: Colors.white, width: 2),
                   ),
-                  padding: const EdgeInsets.all(10),
+                  padding: const EdgeInsets.all(5),
                   child: const BatteryDisplay(),
                 ),
-                const SizedBox(width: 10),
+                const SizedBox(width: 1),
                 Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(5),
@@ -49,7 +49,7 @@ class MainDashboard extends StatelessWidget {
                   padding: const EdgeInsets.all(5),
                   child: const SpeedDisplay(),
                 ),
-                const SizedBox(width: 10), // Adjust as needed for spacing
+                const SizedBox(width: 1), // Adjust as needed for spacing
                 Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(5),
@@ -58,7 +58,7 @@ class MainDashboard extends StatelessWidget {
                   padding: const EdgeInsets.all(5),
                   child: const Throttle(),
                 ),
-                const SizedBox(width: 10),
+                const SizedBox(width: 5),
                 Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(5),

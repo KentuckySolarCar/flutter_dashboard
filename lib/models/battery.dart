@@ -9,13 +9,16 @@ class Battery extends BaseModel {
           'Vehicle.Powertrain.TractionBattery.PackCurrent': '0.0',
           'Vehicle.Powertrain.TractionBattery.CurrentVoltage': '0,0',
           'Vehicle.Powertrain.ElectricMotor.MotorLeft.ControllerCurrent': '0.0', //logs never set this value to not 0
+          'Vehicle.Powertrain.TractionBattery.AverageTemp' : '0',
+          'Vehicle.LowVoltageBattery.CurrentVoltage' : '0.0',
         });
 
   double get stateOfCharge => double.parse(data['Vehicle.Powertrain.TractionBattery.StateOfCharge.PackSOC']);
   String get packVoltage => data['Vehicle.Powertrain.TractionBattery.CurrentVoltage'];
   double get packCurrent => double.parse(data['Vehicle.Powertrain.TractionBattery.PackCurrent']);
   double get controllerCurrent => double.parse(data['Vehicle.Powertrain.ElectricMotor.MotorLeft.ControllerCurrent']); //thus this is always 0
-
+  double get orionAverageTemp => double.parse(data['Vehicle.Powertrain.TractionBattery.AverageTemp']);
+  String get auxPackVoltage => data['Vehicle.LowVoltageBattery.CurrentVoltage'];
 
  @override
   ChangeNotifierProvider<Battery> get provider =>
