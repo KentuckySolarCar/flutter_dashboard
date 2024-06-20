@@ -2,66 +2,83 @@ import 'package:provider/provider.dart';
 import 'package:uksc_dashboard/models/base_model.dart';
 class Button {
   /// The name of this button.
-  final String name;
+  String name;
 
   /// The number of times the button has been long pressed.
-  final int longPresses;
+  int longPresses;
 
   /// The number of times the button has been short pressed.
-  final int shortPresses;
+  int shortPresses;
 
   Button(this.name, this.longPresses, this.shortPresses);
 }
 
+//Since were not using the for loops to do the model this is unused for right now
 const _buttonNames = [
-  'Button_X',
-  'Button_Y',
-  'Button_A',
-  'Button_B',
-  'Button_L',
-  'Button_R',
-  'Right_Turn',
-  'Left_Turn',
-  'Cruise_Main',
-  'Cruise_Plus',
-  'Cruise_Minus'
+  'ButtonX',
+  'ButtonY',
+  'ButtonA',
+  'ButtonB',
+  'ButtonL',
+  'ButtonR',
+  'RightTurn',
+  'LeftTurn',
+  'CruiseMain',
+  'CruisePlus',
+  'CruiseMinus'
 ];
 
 class SteeringWheel extends BaseModel {
-  late final Map<String, Button> _buttons = {};
-
   //Map each buttonName to button_name_short and button_name_long for super call
-  SteeringWheel()
-      : super({for (var name in _buttonNames) '${name}_Short_Press_Count': 0.toString()}
-          ..addAll({for (var name in _buttonNames) '${name}_Long_Press_Count': 0.toString()})) {
-    for (var name in _buttonNames) {
-      _buttons[name] = Button(name, int.parse(data['${name}_Long_Press_Count']!), int.parse(data['${name}_Short_Press_Count']!));
-    }
-  }
+  SteeringWheel() : super({
+    'Vehicle.Chassis.SteeringWheel.ButtonX.LongPressCount': '0',
+    'Vehicle.Chassis.SteeringWheel.ButtonX.ShortPressCount': '0',
+    'Vehicle.Chassis.SteeringWheel.ButtonY.LongPressCount': '0',
+    'Vehicle.Chassis.SteeringWheel.ButtonY.ShortPressCount': '0',
+    'Vehicle.Chassis.SteeringWheel.ButtonA.LongPressCount': '0',
+    'Vehicle.Chassis.SteeringWheel.ButtonA.ShortPressCount': '0',
+    'Vehicle.Chassis.SteeringWheel.ButtonB.LongPressCount': '0',
+    'Vehicle.Chassis.SteeringWheel.ButtonB.ShortPressCount': '0',
+    'Vehicle.Chassis.SteeringWheel.ButtonL.LongPressCount': '0',
+    'Vehicle.Chassis.SteeringWheel.ButtonL.ShortPressCount': '0',
+    'Vehicle.Chassis.SteeringWheel.ButtonR.LongPressCount': '0',
+    'Vehicle.Chassis.SteeringWheel.ButtonR.ShortPressCount': '0',
+    'Vehicle.Chassis.SteeringWheel.RightTurn.LongPressCount': '0',
+    'Vehicle.Chassis.SteeringWheel.RightTurn.ShortPressCount': '0',
+    'Vehicle.Chassis.SteeringWheel.LeftTurn.LongPressCount': '0',
+    'Vehicle.Chassis.SteeringWheel.LeftTurn.ShortPressCount': '0',
+    'Vehicle.Chassis.SteeringWheel.CruiseMain.LongPressCount': '0',
+    'Vehicle.Chassis.SteeringWheel.CruiseMain.ShortPressCount': '0',
+    'Vehicle.Chassis.SteeringWheel.CruisePlus.LongPressCount': '0',
+    'Vehicle.Chassis.SteeringWheel.CruisePlus.ShortPressCount': '0',
+    'Vehicle.Chassis.SteeringWheel.CruiseMinus.LongPressCount': '0',
+    'Vehicle.Chassis.SteeringWheel.CruiseMinus.ShortPressCount': '0',
+  });
+
   //Defining button data members
-  Button get buttonX => _buttons['Button_X']!;
+  Button get buttonX => Button('ButtonX', int.parse(data['Vehicle.Chassis.SteeringWheel.ButtonX.LongPressCount']!), int.parse(data['Vehicle.Chassis.SteeringWheel.ButtonX.ShortPressCount']!));
 
-  Button get buttonY => _buttons['Button_Y']!;
+  Button get buttonY => Button('ButtonY', int.parse(data['Vehicle.Chassis.SteeringWheel.ButtonY.LongPressCount']!), int.parse(data['Vehicle.Chassis.SteeringWheel.ButtonY.ShortPressCount']!));
 
-  Button get buttonA => _buttons['Button_A']!;
+  Button get buttonA => Button('ButtonA', int.parse(data['Vehicle.Chassis.SteeringWheel.ButtonA.LongPressCount']!), int.parse(data['Vehicle.Chassis.SteeringWheel.ButtonA.ShortPressCount']!));
 
-  Button get buttonB => _buttons['Button_B']!;
+  Button get buttonB => Button('ButtonB', int.parse(data['Vehicle.Chassis.SteeringWheel.ButtonB.LongPressCount']!), int.parse(data['Vehicle.Chassis.SteeringWheel.ButtonB.ShortPressCount']!));
 
-  Button get buttonL => _buttons['Button_L']!; //Laptime reset
+  Button get buttonL => Button('ButtonL', int.parse(data['Vehicle.Chassis.SteeringWheel.ButtonL.LongPressCount']!), int.parse(data['Vehicle.Chassis.SteeringWheel.ButtonL.ShortPressCount']!)); //Laptime reset
 
-  Button get buttonR => _buttons['Button_R']!;
+  Button get buttonR => Button('ButtonR', int.parse(data['Vehicle.Chassis.SteeringWheel.ButtonR.LongPressCount']!), int.parse(data['Vehicle.Chassis.SteeringWheel.ButtonR.ShortPressCount']!));
 
-  Button get buttonRightTurn => _buttons['Right_Turn']!;
+  Button get buttonRightTurn => Button('RightTurn', int.parse(data['Vehicle.Chassis.SteeringWheel.RightTurn.LongPressCount']!), int.parse(data['Vehicle.Chassis.SteeringWheel.RightTurn.ShortPressCount']!));
 
-  Button get buttonLeftTurn => _buttons['Left_Turn']!;
+  Button get buttonLeftTurn => Button('LeftTurn', int.parse(data['Vehicle.Chassis.SteeringWheel.LeftTurn.LongPressCount']!), int.parse(data['Vehicle.Chassis.SteeringWheel.LeftTurn.ShortPressCount']!));
 
-  Button get buttonCruiseMain => _buttons['Cruise_Main']!;
+  Button get buttonCruiseMain => Button('CruiseMain', int.parse(data['Vehicle.Chassis.SteeringWheel.CruiseMain.LongPressCount']!), int.parse(data['Vehicle.Chassis.SteeringWheel.CruiseMain.ShortPressCount']!));
 
-  Button get buttonCruisePlus => _buttons['Cruise_Plus']!;
+  Button get buttonCruisePlus => Button('CruisePlus', int.parse(data['Vehicle.Chassis.SteeringWheel.CruisePlus.LongPressCount']!), int.parse(data['Vehicle.Chassis.SteeringWheel.CruisePlus.ShortPressCount']!));
 
-  Button get buttonCruiseMinus => _buttons['Cruise_Minus']!;
+  Button get buttonCruiseMinus => Button('CruiseMinus', int.parse(data['Vehicle.Chassis.SteeringWheel.CruiseMinus.LongPressCount']!), int.parse(data['Vehicle.Chassis.SteeringWheel.CruiseMinus.ShortPressCount']!));
 
-  //Button get buttonLeftTurn => Button('Left_Turn', 1, 3);
+  //Button get buttonL => Button('Button_L', 1, 1);
 
   @override
   ChangeNotifierProvider<SteeringWheel> get provider =>
@@ -80,4 +97,3 @@ class Pedals extends BaseModel {
   ChangeNotifierProvider<Pedals> get provider =>
       ChangeNotifierProvider.value(value: this);
 }
-

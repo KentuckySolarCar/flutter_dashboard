@@ -89,9 +89,11 @@ class BaseApp extends StatelessWidget {
     return MaterialApp(
       title: 'Dashboard',
       home: dashboard,
-      theme: ThemeData(useMaterial3: true),
+      theme: ThemeData(
+        useMaterial3: true,
+      ),
       darkTheme: ThemeData.dark(),
-      themeMode: ThemeMode.system,
+      themeMode: ThemeMode.dark,
       debugShowCheckedModeBanner: false,
     );
   }

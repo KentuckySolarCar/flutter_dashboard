@@ -6,7 +6,7 @@ class Speed extends BaseModel {
 
   /// The speed of the car in mph.
   double get mph => double.parse(data['Vehicle.Speed']);
-  //double get mph => 75;
+  //double get mph => 67;
 
   /// The speed of the car in km/h.
   // double get kmh => data['speed']! * 1.60934;

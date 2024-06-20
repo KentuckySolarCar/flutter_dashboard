@@ -12,20 +12,20 @@ class Throttle extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       width: 100,
-      height: 300,
+      height: 330,
       child: Material(
         child: Column(
           children: [
             const Text(
               "%Throttle",
               style: TextStyle(
-                fontSize: 16,
+                fontSize: 18,
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
               ),
             ),
             SizedBox(
-              height: 270, // Adjust the height of the throttle display as needed
+              height: 300, // Adjust the height of the throttle display as needed
               child: Consumer<Pedals>(
                 builder: (context, throttle, child) {
                   return SfLinearGauge(

@@ -20,15 +20,14 @@ class IndicatorLightsRow extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Forward Reverse
-            Consumer<Status>(
-              builder: (context, status, child) => StateIndicator(
-                activeColor: Colors.green,
-                inactiveColor: Colors.red,
-                isActive: status.forwardReverse,
-                activeText: "FR",
-                inactiveText: "RV",
-                textSize: 40,
+            Consumer<CruiseControl>(
+              builder: (context, cruise, child) => StateIndicator(
+                activeColor: Colors.lightGreen,
+                inactiveColor: Colors.grey[800]!,
+                isActive: cruise.enabled,
+                activeText: "CC",
+                inactiveText: "CC",
+                textSize: 35,
               ),
             ),
             // Triggers Pedals
@@ -39,17 +38,17 @@ class IndicatorLightsRow extends StatelessWidget {
                 isActive: status.wheelPedal,
                 activeText: "P",
                 inactiveText: "T",
-                textSize: 40,
+                textSize: 45,
               ),
             ),
-            // Cruise control on off
-            Consumer<CruiseControl>(
-              builder: (context, cruise, child) => StateIndicator(
-                activeColor: Colors.lightGreen,
-                inactiveColor: Colors.grey[800]!,
-                isActive: cruise.enabled,
-                activeText: "CC",
-                inactiveText: "CC",
+            // Forward Reverse
+            Consumer<Status>(
+              builder: (context, status, child) => StateIndicator(
+                activeColor: Colors.green,
+                inactiveColor: Colors.red,
+                isActive: status.forwardReverse,
+                activeText: "FR",
+                inactiveText: "RV",
                 textSize: 35,
               ),
             ),
@@ -76,7 +75,6 @@ class IndicatorLightsRow extends StatelessWidget {
             ),
           ],
         ),
-
         // Right Turn Signal
         TurnSignalIndicator(signal: TurnSignal.right),
       ],
@@ -110,8 +108,8 @@ class _StateIconIndicatorState extends State<StateIconIndicator> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 60,
-      height: 60,
+      width: 70,
+      height:70,
       decoration: BoxDecoration(
         shape: BoxShape.rectangle,
         color: widget.isActive ? widget.activeColor : widget.inactiveColor,
@@ -122,7 +120,7 @@ class _StateIconIndicatorState extends State<StateIconIndicator> {
         child: Icon(
           widget.isActive ? widget.activeIcon : widget.inactiveIcon,
           color: Colors.white,
-          size: 45,
+          size: 50,
         ),
       ),
     );
@@ -151,8 +149,8 @@ class StateIndicator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 60,
-      height: 60,
+      width: 70,
+      height: 70,
       decoration: BoxDecoration(
         shape: BoxShape.rectangle,
         color: isActive ? activeColor : inactiveColor,
@@ -175,7 +173,6 @@ class StateIndicator extends StatelessWidget {
 
 // Class for turn signal indicators
 enum TurnSignal { left, right }
-
 class TurnSignalIndicator extends StatefulWidget {
   final TurnSignal signal;
 
@@ -184,7 +181,6 @@ class TurnSignalIndicator extends StatefulWidget {
   @override
   _TurnSignalIndicatorState createState() => _TurnSignalIndicatorState();
 }
-
 
 // Class that implements the blinking behavior
 class _TurnSignalIndicatorState extends State<TurnSignalIndicator> {
@@ -222,6 +218,7 @@ class _TurnSignalIndicatorState extends State<TurnSignalIndicator> {
         final Button turnSignalButton = widget.signal == TurnSignal.left
             ? steeringWheel.buttonLeftTurn
             : steeringWheel.buttonRightTurn;
+        // Here rather than using .isPressed to check, since it's a toggle switch we can just do remainder of 2 on short press count
         final bool isSignalActive = turnSignalButton.shortPresses % 2 != 0;
         final IconData iconData = widget.signal == TurnSignal.left
             ? Icons.arrow_back
@@ -236,14 +233,13 @@ class _TurnSignalIndicatorState extends State<TurnSignalIndicator> {
           child: Icon(
             iconData,
             color: color,
-            size: 70,
+            size: 80,
           ),
         );
       },
     );
   }
 }
-
 
 // For continueously solid turn signal indicators use this code below
 
