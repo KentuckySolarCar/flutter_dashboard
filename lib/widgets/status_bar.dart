@@ -27,7 +27,8 @@ class StatusBar extends StatelessWidget implements PreferredSizeWidget {
 
     return Material(
       elevation: appBarTheme.elevation ?? 0.0,
-      color: appBarTheme.backgroundColor,
+      //color: appBarTheme.backgroundColor,
+      color: Colors.black,
       shadowColor: appBarTheme.shadowColor,
       surfaceTintColor: appBarTheme.surfaceTintColor,
       shape: appBarTheme.shape,
@@ -36,11 +37,11 @@ class StatusBar extends StatelessWidget implements PreferredSizeWidget {
         children: [
           Placeholder(
             color: Colors.transparent,
-            fallbackWidth: 240,
+            fallbackWidth: 245,
           ),
           SizedBox(width: 10),
           Clock(),
-          SizedBox(width: 80),
+          SizedBox(width: 75),
           ConnectionStatus(),
         ],
       )

@@ -12,6 +12,7 @@ class SpeedDisplay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
+      color: Colors.black,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [

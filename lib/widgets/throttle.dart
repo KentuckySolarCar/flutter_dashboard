@@ -14,6 +14,7 @@ class Throttle extends StatelessWidget {
       width: 100,
       height: 330,
       child: Material(
+        color: Colors.black,
         child: Column(
           children: [
             const Text(
