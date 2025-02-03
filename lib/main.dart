@@ -7,6 +7,7 @@ import 'package:uksc_dashboard/telemetry.dart';
 import 'package:uksc_dashboard/dashboards/main_dash.dart';
 import 'package:uksc_dashboard/dashboards/basic.dart';
 import 'package:uksc_dashboard/widgets/splash_screen.dart';
+import 'package:uksc_dashboard/dashboards/Debug_Dash.dart';
 
 final log = Logger('main');
 
@@ -71,7 +72,7 @@ void main(List<String> args) {
     case 'testing':
       runApp(MultiProvider(
         providers: providers,
-        child: const BaseApp(dashboard: MainDashboard()),
+        child: const BaseApp(dashboard: DebugDashboard()),
       ));
       break;
     default:
