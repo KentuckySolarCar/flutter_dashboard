@@ -6,7 +6,6 @@ import 'package:logging/logging.dart';
 import 'package:uksc_dashboard/telemetry.dart';
 import 'package:uksc_dashboard/dashboards/main_dash.dart';
 import 'package:uksc_dashboard/dashboards/basic.dart';
-import 'package:uksc_dashboard/widgets/splash_screen.dart';
 
 final log = Logger('main');
 
@@ -91,7 +90,7 @@ class BaseApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Dashboard',
-      home: SplashScreen(dashboard: dashboard,),
+      home: dashboard,
       theme: ThemeData(
         useMaterial3: true,
       ),

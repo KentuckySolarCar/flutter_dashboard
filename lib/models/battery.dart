@@ -16,7 +16,7 @@ class Battery extends BaseModel {
   double get stateOfCharge => double.parse(data['Vehicle.Powertrain.TractionBattery.StateOfCharge.PackSOC']);
   String get packVoltage => data['Vehicle.Powertrain.TractionBattery.CurrentVoltage'];
   double get packCurrent => double.parse(data['Vehicle.Powertrain.TractionBattery.PackCurrent']);
-  double get controllerCurrent => double.parse(data['Vehicle.Powertrain.ElectricMotor.MotorLeft.ControllerCurrent']); //thus this is always 0
+  double get controllerCurrent => double.parse(data['Vehicle.Powertrain.ElectricMotor.MotorLeft.ControllerCurrent']); //thus this is always 0 //what did i mean by this 
   double get orionAverageTemp => double.parse(data['Vehicle.Powertrain.TractionBattery.AverageTemp']);
   String get auxPackVoltage => data['Vehicle.LowVoltageBattery.CurrentVoltage'];
 

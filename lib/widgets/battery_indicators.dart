@@ -51,7 +51,7 @@ class BatteryDisplay extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 _buildBatteryInfo(context, 'Aux Battery', 'Aux Battery', 'V', Colors.white),
-                //TODO add cell voltage changer
+                //TODO add cell voltage changer or make it an average
                 _buildBatteryInfo(context, 'Cell Voltage', 'Cell Voltage', 'V', Colors.white),
               ],
             ),

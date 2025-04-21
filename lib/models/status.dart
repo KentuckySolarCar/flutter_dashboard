@@ -5,12 +5,12 @@ class Status extends BaseModel {
   Status() : super({
     'Vehicle.Chassis.WheelPedal' : 'pedal',
     'Vehicle.Chassis.ForwardReverse' : '0',
-    //Brake lockout goes here
+    //'Vehicle.' brake lockout
   });
 
   bool get forwardReverse => int.parse(data['Vehicle.Chassis.ForwardReverse']) == 0;
   bool get wheelPedal => data['Vehicle.Chassis.WheelPedal'] == 'pedal';
-  bool get brakeLockout => true;
+  bool get brakeLockout => false;
 
   @override
   ChangeNotifierProvider<Status> get provider =>

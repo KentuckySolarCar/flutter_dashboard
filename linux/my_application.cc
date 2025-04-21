@@ -48,7 +48,7 @@ static void my_application_activate(GApplication* application) {
   }
 
   gtk_window_set_default_size(window, 800, 480);
-  gtk_window_fullscreen(GTK_WINDOW(window)); // This works to have the app start in full screen!
+  gtk_window_fullscreen(GTK_WINDOW(window)); // This line forces the app to start in fullscreen mode
   gtk_widget_show(GTK_WIDGET(window));
 
   g_autoptr(FlDartProject) project = fl_dart_project_new();
