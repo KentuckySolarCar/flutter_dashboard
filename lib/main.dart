@@ -4,13 +4,16 @@ import 'package:provider/provider.dart';
 import 'package:logging/logging.dart';
 
 import 'package:uksc_dashboard/telemetry.dart';
+import 'package:uksc_dashboard/dashboards/main_dash.dart';
 import 'package:uksc_dashboard/dashboards/basic.dart';
 
 final log = Logger('main');
 
 const defaultPort = 8090;
+//const defaultPort = 55556;
 const defaultHost = '127.0.0.1';
-const defaultDashboard = 'basic';
+//const defaultHost = 'localhost';
+const defaultDashboard = 'testing';
 
 void main(List<String> args) {
   Logger.root.onRecord.listen((record) {
@@ -64,6 +67,12 @@ void main(List<String> args) {
       ));
       break;
     case 'dev':
+    case 'testing':
+      runApp(MultiProvider(
+        providers: providers,
+        child: const BaseApp(dashboard: MainDashboard()),
+      ));
+      break;
     default:
       runApp(MultiProvider(
         providers: providers,
@@ -82,9 +91,11 @@ class BaseApp extends StatelessWidget {
     return MaterialApp(
       title: 'Dashboard',
       home: dashboard,
-      theme: ThemeData(useMaterial3: true),
+      theme: ThemeData(
+        useMaterial3: true,
+      ),
       darkTheme: ThemeData.dark(),
-      themeMode: ThemeMode.system,
+      themeMode: ThemeMode.dark,
       debugShowCheckedModeBanner: false,
     );
   }
