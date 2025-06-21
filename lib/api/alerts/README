@@ -1,0 +1,14 @@
+# UKSC_Errors
+Adds support for encoding errors in a common way and sorting their priorities. Allows communication of these error messages via the FlexCAN library
+
+# Note
+If you decide to add a library, follow these steps so that changes are properly reflected both here and where the library will be used.
+
+# Expanding the library of error types
+Feel free to add more enumerated types to the **alertEnums.h** file. This helps to maintain Alert encoding style across all the boards into the future.
+
+# Warning
+The Alert class will crash silently during sorting if you are not using ChibiOS threads. All boards should at least do **chBegin()** to run from instead of going to **void loop()**
+
+# Examples
+Look at the UKSC_Alert_Test.ino file in the examples folder.
